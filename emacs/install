@@ -1,5 +1,7 @@
 #!/bin/sh
 
+mkdir -p ~/.emacs.d
+
 dir=`pwd`
 cat <<EOF >"$HOME/.emacs.d/init.el"
 (load "$dir/init")
