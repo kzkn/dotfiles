@@ -64,6 +64,18 @@
 (when window-system
   (setq x-select-enable-clipboard t))
 
+;; use clipboard (-nw)
+(unless window-system
+  (defun xsel-cut (text &optional rest)
+    (let* ((process-connection-type nil)
+           (proc (start-process "xsel" "*Messages*" "xsel" "-b" "-i")))
+      (process-send-string proc text)
+      (process-send-eof proc)))
+  (defun xsel-paste ()
+    (shell-command-to-string "xsel -b -o"))
+  (setq interprogram-cut-function 'xsel-cut)
+  (setq interprogram-paste-function 'xsel-paste))
+
 ;; ignore cases on find-file completion
 (setq completion-ignore-case t)
 (setq read-file-name-completion-ignore-case t)
