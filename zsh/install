@@ -1,0 +1,9 @@
+#!/bin/sh
+
+dir=`pwd`
+cat <<EOF >"$HOME/.zshrc"
+. $dir/rc
+EOF
+cat <<EOF >"$HOME/.zprofile"
+. $dir/profile
+EOF

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+with_x=0
+
+while getopts x OPT
+do
+  case $OPT in
+    x) with_x=1 ;;
+  esac
+done
+
+shift $((OPTIND - 1))
+
+cd `dirname $0`
+for sh in */install; do
+  dir=`dirname "$sh"`
+  if [ "$dir" != x -o "$with_x" = 1 ]; then
+    (cd "$dir"; ./install)
+  fi
+done

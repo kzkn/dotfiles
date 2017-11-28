@@ -1,0 +1,25 @@
+set-option -g prefix C-t
+unbind-key C-b
+bind-key C-t send-prefix
+
+set-option -g default-terminal screen-256color
+
+# -------
+# Status
+# -------
+set-option -g status-bg black
+set-option -g status-fg default
+set-option -g status-attr bold
+set-option -g status-justify centre
+set-option -g status-left-length 0
+set-option -g status-right-length 0
+
+# -------
+# Window
+# -------
+set-window-option -g window-status-bg white
+set-window-option -g window-status-fg black
+set-window-option -g window-status-format " #F#I:#W#F "
+set-window-option -g window-status-current-bg magenta
+set-window-option -g window-status-current-fg white
+set-window-option -g window-status-current-format " #F#I:#W#F "

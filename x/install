@@ -1,0 +1,12 @@
+#!/bin/sh
+
+dir=`pwd`
+_link() {
+  mkdir -p "`dirname $2`"
+  ln -f -s "$dir/$1" "$2"
+}
+
+_link Xmodmap ~/.Xmodmap
+_link xprofile ~/.xprofile
+_link Xresources ~/.Xresources
+_link gtk-3.0-settings.ini ~/.config/gtk-3.0/settings.ini

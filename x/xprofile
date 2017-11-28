@@ -1,0 +1,11 @@
+export DefaultIMModule=fcitx
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+xrdb -merge ~/.Xresources
+
+fcitx-autostart
+urxvt &
+firefox &
+
+exec xmonad

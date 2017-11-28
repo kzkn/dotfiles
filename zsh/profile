@@ -1,0 +1,14 @@
+# -*- mode: sh -*-
+
+## environ
+export EDITOR=vi
+export ANSIBLE_NOCOWS=1
+
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+PATH=/usr/lib/lightdm/lightdm:$PATH
+PATH=$HOME/.cask/bin:$PATH
+PATH=$HOME/.rbenv/bin:$PATH
+PATH=$HOME/bin:$PATH
+export PATH
+
+which rbenv 1>/dev/null 2>&1 && eval "$(rbenv init -)"

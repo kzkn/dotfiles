@@ -1,0 +1,17 @@
+[user]
+	name = Kazuki Nishikawa
+	email = kz.nishikawa@gmail.com
+[color]
+	ui = auto
+[core]
+	excludesfile = /home/kazuki/.gitignore
+	autocrlf = false
+[alias]
+	co = checkout
+	br = branch
+	st = status --short --branch
+	ci = commit -v
+	lg = log --graph --pretty=oneline --decorate
+	ls = log --oneline --stat
+	l1 = log --oneline
+	pick = cherry-pick

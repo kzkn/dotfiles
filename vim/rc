@@ -1,0 +1,28 @@
+" my settings
+set nocompatible
+set nohlsearch
+set hidden
+set incsearch
+set ignorecase
+set smartcase
+set showmode
+set title
+set ts=4 sw=4 sts=0
+set expandtab
+set smarttab
+set showmatch
+set autoindent
+set smartindent
+set clipboard+=unnamed  " share OS clipboard
+set autoread
+set backspace=indent,eol,start
+set formatoptions=roqlmM
+set background=dark
+
+highlight link ZenkakuSpace Error
+match ZenkakuSpace /　/
+
+augroup BufferAu
+    autocmd!
+    autocmd BufNewFile,BufRead,BufEnter * if isdirectory(expand("%:p:h")) | cd %:p:h | endif
+augroup END

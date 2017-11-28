@@ -1,0 +1,7 @@
+#!/bin/sh
+
+dir=`pwd`
+cat <<EOF >"$HOME/.emacs.d/init.el"
+(load "$dir/init")
+EOF
+ln -f -s "$dir/Cask" "$HOME/.emacs.d/Cask"

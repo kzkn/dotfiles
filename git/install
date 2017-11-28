@@ -1,0 +1,5 @@
+#!/bin/sh
+
+dir=`pwd`
+ln -f -s "$dir/config" "$HOME/.gitconfig"
+ln -f -s "$dir/ignore" "$HOME/.gitignore"

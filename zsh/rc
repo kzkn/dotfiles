@@ -1,0 +1,69 @@
+# -*- mode: sh -*-
+
+## alias
+alias e='emacsclient'
+alias s='git status --short --branch'
+alias l='git log --oneline'
+alias d='git diff'
+alias be='bundle exec'
+
+## functions
+function _do_tmux_capture {
+  dir="$HOME/tmp/capture"
+  if [ -n "$1" ]; then
+    out="$dir/$1"
+  else
+    out=`mktemp -u --tmpdir=$dir`
+  fi
+  shift
+  mkdir -p "$dir"
+  tmux capture-pane "$@" >"$out"
+  echo "$out"
+}
+
+function cap { _do_tmux_capture "$1" -p }
+function caph { _do_tmux_capture "$1" -pS -32768 }
+
+## local, prompt
+function _load { [ -f "$1" ] && . "$1" }
+_dir="`dirname $0`"
+_load "$_dir/local"
+_load "$_dir/prompt"
+
+## history
+HISTFILE=~/.history
+HISTSIZE=1000000                      # メモリー内の履歴数
+SAVEHIST=1000000
+setopt extended_history               # 履歴ファイルに時刻を記録
+setopt histignorealldups              # 複数回続けて打ったコマンドを無視
+setopt sharehistory                   # 履歴をプロセス間で共有
+function history-all { history -E 1 } # 全履歴の一覧を表示
+
+## completion
+autoload -Uz compinit
+compinit
+
+zstyle ':completion:*' auto-description 'specify: %d'
+zstyle ':completion:*' completer _expand _complete _correct _approximate
+zstyle ':completion:*' format 'Completing %d'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' menu select=2
+eval "$(dircolors -b)"
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
+zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
+zstyle ':completion:*' menu select=long
+zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
+zstyle ':completion:*' use-compctl false
+zstyle ':completion:*' verbose true
+
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+
+## emacs like key-bind
+bindkey -e
+
+## ssh-agent
+# [ 0 != `ps auxw | grep ssh-agent | grep -v grep | wc -l` ] || ssh-agent bash
+# [ 0 != `ssh-add -L | grep 'id_rsa$' | wc -l` ] || ssh-add
