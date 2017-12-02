@@ -228,18 +228,30 @@
            (setq ad-return-value enh-ruby-indent-level))
           ((and (eq major-mode 'haml-mode) (boundp 'haml-indent-offset))
            (setq ad-return-value haml-indent-offset))
+          ((and (eq major-mode 'sass-mode) (boundp 'sass-indent-offset))
+           (setq ad-return-value sass-indent-offset))
           (t
            ad-do-it)))
 
   (ad-activate 'highlight-indentation-guess-offset)
 
-  (dolist (hook '(enh-ruby-mode-hook python-mode-hook haml-mode-hook))
-    (add-hook hook 'highlight-indentation-mode)
-    (add-hook hook 'highlight-indentation-current-column-mode)))
+  (let ((hooks '(enh-ruby-mode-hook
+                 python-mode-hook haml-mode-hook
+                 coffee-mode-hook sass-mode-hook)))
+    (dolist (hook hooks)
+      (add-hook hook 'highlight-indentation-mode)
+      (add-hook hook 'highlight-indentation-current-column-mode))))
 
 (use-package wgrep
   :config
   (setq wgrep-auto-save-buffer t))
+
+(use-package coffee-mode
+  :config
+  (custom-set-variables
+   '(coffee-tab-width 2)))
+
+(use-package sass-mode)
 
 
 ;;;; Global Bindings
