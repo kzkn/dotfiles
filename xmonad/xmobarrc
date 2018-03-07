@@ -1,0 +1,33 @@
+-- -*- mode: haskell -*-
+Config { font = "xft:Noto Sans CJK JP-9"
+       , additionalFonts = []
+       , borderColor = "black"
+       -- , border = TopB
+       , bgColor = "#282828"
+       , fgColor = "#ebdbb2"
+       -- , alpha = 255
+       , position = Top
+       -- , textOffset = -1
+       -- , iconOffset = -1
+       , lowerOnStart = False
+       -- , pickBroadest = False
+       -- , persistent = False
+       -- , hideOnStart = False
+       -- , iconRoot = "."
+       -- , allDesktops = True
+       -- , overrideRedirect = True
+       , commands = [ Run Network "enp0s3" ["-t", "<dev>: <rx>KB/<tx>KB", "-L","0","-H","32",
+                                            "--normal","green","--high","red"] 10
+                    , Run MultiCpu ["-t", "Cpu: <total0>%/<total1>%", "-L","3","-H","50",
+                                    "--normal","green","--high","red"] 10
+                    , Run Memory ["-t","Mem: <usedratio>%"] 10
+                    , Run Swap [] 10
+                    , Run Date "%a %m-%d %H:%M" "date" 10
+                    , Run DiskU [("/", "Root <usedp>%")] [] 20
+                    , Run StdinReader
+                    ]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = "%StdinReader%}{%multicpu% | %memory% | %swap% | %enp0s3%\
+                    \ | %disku% | <fc=#83c07c>%date%</fc> "
+       }
