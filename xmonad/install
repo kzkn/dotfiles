@@ -1,0 +1,6 @@
+#!/bin/sh
+
+dir=`pwd`
+mkdir -p "$HOME/.xmonad"
+ln -f -s "$dir/xmonad.hs" "$HOME/.xmonad/xmonad.hs"
+ln -f -s "$dir/xmobarrc" "$HOME/.xmonad/xmobarrc"
