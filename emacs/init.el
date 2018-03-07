@@ -161,6 +161,8 @@
 (use-package flycheck)
 (use-package flycheck-pyflakes)
 
+(load-x "flycheck-checker")
+
 (use-package yaml-mode
   :commands (yaml-mode))
 
@@ -177,9 +179,8 @@
 (defun set-enh-ruby-mode-face ()
   (set-face-attribute 'enh-ruby-op-face nil :foreground nil :inherit 'default))
 
-(defun enable-ruby-flycheck ()
-  (setq flycheck-checker 'ruby-rubocop)
-  (flycheck-mode t))
+(defun enable-ruby-flycheck-if-rubocop-yml-exists ()
+  (enable-flycheck-if-parent-file-exists ".rubocop.yml" 'ruby-rubocop))
 
 (use-package enh-ruby-mode
   :commands (enh-ruby-mode)
@@ -187,7 +188,7 @@
   (setq enh-ruby-deep-indent-paren nil
         enh-ruby-add-encoding-comment-on-save nil)
   (add-hook 'enh-ruby-mode-hook 'set-enh-ruby-mode-face t)
-  (add-hook 'enh-ruby-mode-hook 'enable-ruby-flycheck)
+  (add-hook 'enh-ruby-mode-hook 'enable-ruby-flycheck-if-rubocop-yml-exists)
   (add-hook 'enh-ruby-mode-hook 'inf-ruby-minor-mode)
   :mode
   (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
@@ -211,8 +212,13 @@
   (setq rspec-use-spring-when-possible nil
         rspec-use-bundler-when-possible t))
 
+(defun enable-haml-flycheck-if-haml-lint-yml-exists ()
+  (enable-flycheck-if-parent-file-exists ".haml-lint.yml" 'haml-lint))
+
 (use-package haml-mode
-  :commands (haml-mode))
+  :commands (haml-mode)
+  :config
+  (add-hook 'haml-mode-hook 'enable-haml-flycheck-if-haml-lint-yml-exists))
 
 (use-package magit
   :commands (magit-status)

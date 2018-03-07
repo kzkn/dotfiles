@@ -121,3 +121,24 @@
          (tmux (executable-find "tmux"))
          (command (format "%s new-window -c %s" tmux start-directory)))
     (call-process-shell-command command)))
+
+(defun my/exists-p (dir targets)
+  (let ((default-directory dir))
+    (loop for target in targets
+          if (file-exists-p target)
+          return target)))
+
+(defun my/find-to-root (start targets)
+  (let ((prev "")
+        (dir (file-name-as-directory start)))
+    (while (and (not (string= dir prev))
+                (not (my/exists-p dir targets)))
+      (setq prev dir
+            dir (file-name-directory (directory-file-name dir))))
+    (and (not (string= dir prev)) dir)))
+
+(defun enable-flycheck-if-parent-file-exists (file checker)
+  (let* ((curdir (file-name-directory (buffer-file-name)))
+         (exists (my/find-to-root curdir (list file))))
+    (setq flycheck-checker checker)
+    (flycheck-mode (if exists 1 0))))
