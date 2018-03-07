@@ -17,6 +17,7 @@ set-option -g status-right-length 0
 # -------
 # Window
 # -------
+set-window-option -g automatic-rename off
 set-window-option -g window-status-bg white
 set-window-option -g window-status-fg black
 set-window-option -g window-status-format " #F#I:#W#F "
