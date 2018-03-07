@@ -1,7 +1,7 @@
 # -*- mode: sh -*-
 
 ## alias
-alias e='emacsclient'
+alias e='emacsclient -a ""'
 alias s='git status --short --branch'
 alias l='git log --oneline'
 alias d='git diff'
