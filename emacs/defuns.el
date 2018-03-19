@@ -113,6 +113,16 @@
   (let ((command (format "cd %s && %s" grep-dir command-args)))
     (grep command)))
 
+(defun find-file-in-git-ls-files ()
+  (interactive)
+  (let* ((repo (git-root-directory))
+         (files (shell-command-to-string (format "cd %s && git ls-files" repo))))
+    (find-file
+     (concat repo "/"
+             (ido-completing-read "Find file: "
+                                  (cl-remove-if (lambda (f) (string= f ""))
+                                                (split-string files "\n")))))))
+
 (defun sh (&optional arg)
   (interactive "P")
   (let* ((start-directory (if arg

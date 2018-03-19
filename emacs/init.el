@@ -280,6 +280,8 @@
 
 (bind-key "C-c s" 'swap-windows)
 (bind-key "C-c w" 'whitespace-mode)
+(bind-key "C-c f" 'find-file-in-git-ls-files)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
