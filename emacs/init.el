@@ -275,6 +275,8 @@
 (bind-key "M-{" 'previous-buffer)
 (bind-key "M-]" 'next-error)
 (bind-key "M-[" 'previous-error)
+(bind-key "M-s" 'vim-f)
+(bind-key "M-r" 'vim-t)
 
 (bind-key "C-c s" 'swap-windows)
 (bind-key "C-c w" 'whitespace-mode)

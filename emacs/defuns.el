@@ -142,3 +142,31 @@
          (exists (my/find-to-root curdir (list file))))
     (setq flycheck-checker checker)
     (flycheck-mode (if exists 1 0))))
+
+(defvar *vim-ft-last-char*)
+
+(defun %vim-ft (char f-or-t)
+  (let ((forward (eq f-or-t 'f)))
+    (unless char
+      (if (eq last-command (if forward 'vim-f 'vim-t))
+          (setq char *vim-ft-last-char*)
+        (setq char (read-char "Character: "))))
+    (setq *vim-ft-last-char* char)
+
+    (let* ((search-fn (if forward 'search-forward 'search-backward))
+           (bound-fn (if forward 'point-at-eol 'point-at-bol))
+           (off (if forward 1 0))
+           (p (save-excursion
+                (forward-char off)
+                (let ((ep (funcall bound-fn)))
+                  (funcall search-fn (char-to-string char) ep nil)))))
+      (when p
+        (goto-char (if forward (1- p) p))))))
+
+(defun vim-f (&optional char)
+  (interactive)
+  (%vim-ft char 'f))
+
+(defun vim-t (&optional char)
+  (interactive)
+  (%vim-ft char 't))
