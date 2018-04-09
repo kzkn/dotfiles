@@ -1,15 +1,6 @@
 (require 'cask "~/.cask/cask.el")
 (cask-initialize)
 
-(defun load-x (file &rest args)
-  (let* ((dir (file-name-directory load-file-name))
-         (f (expand-file-name file dir)))
-    (apply 'load f args)))
-
-(load-x "misc")
-(load-x "defuns")
-(load-x "site" t)
-
 (server-start)
 
 ;;;; Packages
@@ -17,13 +8,17 @@
 
 (use-package ido
   :config
-  (ido-mode t)
+  (ido-mode 1)
   (setq ido-everywhere t)
   (setq ido-enable-prefix nil)
   (setq ido-enable-flex-matching t)
   (setq ido-create-new-buffer 'always)
   (setq ido-max-prospects 10)
   (setq ido-case-fold t))
+
+(use-package ido-grid-mode
+  :config
+  (ido-grid-mode 1))
 
 (use-package markdown-mode
   :commands (markdown-mode)
@@ -258,6 +253,20 @@
    '(coffee-tab-width 2)))
 
 (use-package sass-mode)
+
+(use-package inflections)
+
+
+;;;; Load local files
+
+(defun load-x (file &rest args)
+  (let* ((dir (file-name-directory load-file-name))
+         (f (expand-file-name file dir)))
+    (apply 'load f args)))
+
+(load-x "misc")
+(load-x "defuns")
+(load-x "site" t)
 
 
 ;;;; Global Bindings

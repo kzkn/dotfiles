@@ -2,6 +2,7 @@
 
 ## alias
 alias e='emacsclient -a ""'
+alias ekill='emacsclient -e "(kill-emacs)"'
 alias s='git status --short --branch'
 alias l='git log --oneline'
 alias d='git diff'

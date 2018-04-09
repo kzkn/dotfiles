@@ -27,3 +27,5 @@
 (depends-on "coffee-mode")
 (depends-on "sass-mode")
 (depends-on "slime")
+(depends-on "ido-grid-mode")
+(depends-on "inflections")
