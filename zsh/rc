@@ -6,6 +6,7 @@ alias s='git status --short --branch'
 alias l='git log --oneline'
 alias d='git diff'
 alias be='bundle exec'
+alias lock='light-locker-command -l'
 
 ## functions
 function _do_tmux_capture {

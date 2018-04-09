@@ -1,7 +1,7 @@
 URxvt.scrollBar: false
 URxvt.cursorBlink: true
 
-URxvt.font: xft:Dejavu Sans Mono-9, \
+URxvt.font: xft:Dejavu Sans Mono-11, \
             xft:IPAGothic
 URxvt.letterSpace: -1
 URxvt.lineSpace: 0

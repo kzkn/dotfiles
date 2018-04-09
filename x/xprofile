@@ -2,10 +2,17 @@ export DefaultIMModule=fcitx
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
+export GDK_DPI_SCALE=1.1
+
 xrdb -merge ~/.Xresources
+xrandr --dpi 144
+xbindkeys -f ~/.xbindkeysrc
 
 fcitx-autostart
-urxvt &
+light-locker &
+urxvtd -q -o -f
 firefox &
+synclient TouchpadOff=1
+feh --bg-scale ~/Images/wallpaper.jpg
 
 exec xmonad

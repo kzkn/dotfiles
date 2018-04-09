@@ -1,1 +1,7 @@
-add mod4 = Muhenkan Henkan_Mode
+add mod4 = Super_L
+
+! capslock as ctrl
+clear lock
+clear control
+keycode 66 = Control_L
+add control = Control_L Control_R

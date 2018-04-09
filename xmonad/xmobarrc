@@ -1,5 +1,5 @@
 -- -*- mode: haskell -*-
-Config { font = "xft:Noto Sans CJK JP-9"
+Config { font = "xft:Noto Sans CJK JP-10"
        , additionalFonts = []
        , borderColor = "black"
        -- , border = TopB
@@ -16,18 +16,24 @@ Config { font = "xft:Noto Sans CJK JP-9"
        -- , iconRoot = "."
        -- , allDesktops = True
        -- , overrideRedirect = True
-       , commands = [ Run Network "enp0s3" ["-t", "<dev>: <rx>KB/<tx>KB", "-L","0","-H","32",
-                                            "--normal","green","--high","red"] 10
-                    , Run MultiCpu ["-t", "Cpu: <total0>%/<total1>%", "-L","3","-H","50",
-                                    "--normal","green","--high","red"] 10
+       , commands = [ Run Wireless "wlp2s0" ["-t", "Wifi: <essid> <quality>"] 10
+                    , Run Cpu ["-t", "Cpu: <total>%", "-L","3","-H","50",
+                               "--normal","green","--high","red"] 10
                     , Run Memory ["-t","Mem: <usedratio>%"] 10
-                    , Run Swap [] 10
                     , Run Date "%a %m-%d %H:%M" "date" 10
-                    , Run DiskU [("/", "Root <usedp>%")] [] 20
+                    , Run Com "/home/kazuki/bin/getvolume.sh" [] "myvolume" 10
+                    , Run BatteryP ["BAT0"]
+                                   ["-t", "<acstatus> - <left>%",
+                                    "-L", "10", "-H", "80", "-p", "3",
+                                    "--", "-O", "<fc=green>On</fc>", "-i", "Idle",
+                                    "-o", "<fc=red>Off</fc>",
+                                    "-L", "-15", "-H", "-5",
+                                    "-l", "red", "-m", "blue", "-h", "green"]
+                                   10
                     , Run StdinReader
                     ]
        , sepChar = "%"
        , alignSep = "}{"
-       , template = "%StdinReader%}{%multicpu% | %memory% | %swap% | %enp0s3%\
-                    \ | %disku% | <fc=#83c07c>%date%</fc> "
+       , template = "%StdinReader%}{%cpu% | %memory% | %wlp2s0wi%\
+                    \ | %battery% | %myvolume% | <fc=#83c07c>%date%</fc> "
        }

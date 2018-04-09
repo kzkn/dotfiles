@@ -16,7 +16,7 @@ import XMonad.Util.NamedScratchpad
 myTerminal = "urxvtc -tr -sh 20"
 myWorkspaces = map show [1..5]
 
-myBorderWidth = 2
+myBorderWidth = 3
 
 myBlack = "#282828"
 myRed = "#fb4934"
@@ -51,7 +51,7 @@ myLogHook h = dynamicLogWithPP $ xmobarPP
   , ppCurrent = xmobarColor myMagenta myBlack . (\ws -> "●")
   , ppHidden = xmobarColor myWhite myBlack . (\ws -> "●")
   , ppHiddenNoWindows = xmobarColor myGray myBlack . (\ws -> "○")
-  , ppTitle = xmobarColor myCyan myBlack . shorten 20
+  , ppTitle = xmobarColor myCyan myBlack . shorten 50
   }
 
 myScratchpads = [
