@@ -156,8 +156,6 @@
 (use-package flycheck)
 (use-package flycheck-pyflakes)
 
-(load-x "flycheck-checker")
-
 (use-package yaml-mode
   :commands (yaml-mode))
 
@@ -267,6 +265,7 @@
 (load-x "misc")
 (load-x "defuns")
 (load-x "site" t)
+(load-x "flycheck-checker")
 
 
 ;;;; Global Bindings
