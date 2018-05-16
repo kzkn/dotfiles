@@ -8,6 +8,7 @@ xrdb -merge ~/.Xresources
 xrandr --dpi 144
 xbindkeys -f ~/.xbindkeysrc
 
+$HOME/bin/wifi
 fcitx-autostart
 light-locker &
 urxvtd -q -o -f

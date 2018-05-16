@@ -1,6 +1,5 @@
 *.swp
 *.pyc
-bin
 gen
 \#*\#
 .metadata
