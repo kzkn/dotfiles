@@ -1,3 +1,7 @@
+! Disable Keycap Picture Insert Mode
+URxvt.iso14755: false
+URxvt.iso14755_52: false
+
 URxvt.scrollBar: false
 URxvt.cursorBlink: true
 
@@ -28,3 +32,13 @@ URxvt.background: #282828
 URxvt.colorIT: #8ec07c
 URxvt.colorBD: #d5c4a1
 URxvt.colorUL: #83a598
+
+! Xterm escapes
+! URxvt.keysym.S-Up:    \033[1;2A
+! URxvt.keysym.S-Down:  \033[1;2B
+! URxvt.keysym.S-Right: \033[1;2C
+! URxvt.keysym.S-Left:  \033[1;2D
+URxvt.keysym.Shift-Up:    \033[A
+URxvt.keysym.Shift-Down:  \033[B
+URxvt.keysym.Shift-Right: \033[C
+URxvt.keysym.Shift-Left:  \033[D
