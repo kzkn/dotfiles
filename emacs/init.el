@@ -253,6 +253,7 @@
 (bind-key "C-c s" 'swap-windows)
 (bind-key "C-c w" 'whitespace-mode)
 (bind-key "C-c f" 'find-file-in-git-ls-files)
+(bind-key "C-c g" 'ghq-cd)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.

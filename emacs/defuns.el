@@ -109,3 +109,13 @@
          (exists (my/find-to-root curdir (list file))))
     (setq flycheck-checker checker)
     (flycheck-mode (if exists 1 0))))
+
+(defun ghq-cd ()
+  (interactive)
+  (let* ((dirs (shell-command-to-string "ghq list"))
+         (ghq-root (shell-command-to-string "ghq root")))
+    (find-file
+     (concat (s-chomp ghq-root) "/"
+             (ido-completing-read "Select directory: "
+                                  (cl-remove-if (lambda (f) (string= f ""))
+                                                (split-string dirs "\n")))))))
