@@ -121,25 +121,11 @@
   (setq web-mode-markup-indent-offset 2
         web-mode-css-indent-offset 2
         web-mode-code-indent-offset 2
-        web-mode-attr-indent-offset nil
-        web-mode-engines-alist '(("php" . "\\.ctp$")))
+        web-mode-attr-indent-offset nil)
   :mode
-  (("\\.ctp$" . web-mode)
-   ("\\.html?$" . web-mode)
+  (("\\.html?$" . web-mode)
    ("\\.jsx?$" . web-mode)
-   ("\\.json$" . web-mode)
-   ("\\.ftl$" . web-mode)))
-
-(use-package php-mode
-  :commands (php-mode)
-  :config
-  (setq php-manual-path "/opt/phpdoc")
-  (add-hook 'php-mode-hook
-            (lambda ()
-              (setq-local c-basic-offset 4)))
-  (bind-key "C-c C-m" 'php-search-documentation php-mode-map)
-  :mode
-  (("\\.php$" . php-mode)))
+   ("\\.json$" . web-mode)))
 
 (use-package ws-butler
   :config
@@ -154,20 +140,9 @@
           emacs-lisp-mode-hook)))
 
 (use-package flycheck)
-(use-package flycheck-pyflakes)
 
 (use-package yaml-mode
   :commands (yaml-mode))
-
-(use-package editorconfig
-  :init
-  (add-hook 'prog-mode-hook (lambda () (editorconfig-mode 1)))
-  (add-hook 'text-mode-hook (lambda () (editorconfig-mode 1))))
-
-(use-package adoc-mode
-  :commands (adoc-mode)
-  :mode
-  (("\\.adoc$" . adoc-mode)))
 
 (defun set-enh-ruby-mode-face ()
   (set-face-attribute 'enh-ruby-op-face nil :foreground nil :inherit 'default))
@@ -182,20 +157,12 @@
         enh-ruby-add-encoding-comment-on-save nil)
   (add-hook 'enh-ruby-mode-hook 'set-enh-ruby-mode-face t)
   (add-hook 'enh-ruby-mode-hook 'enable-ruby-flycheck-if-rubocop-yml-exists)
-  (add-hook 'enh-ruby-mode-hook 'inf-ruby-minor-mode)
   :mode
   (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
 
 (use-package ruby-electric
   :commands (ruby-electric-mode)
   :init (add-hook 'enh-ruby-mode-hook 'ruby-electric-mode))
-
-(use-package inf-ruby
-  :commands (inf-ruby-minor-mode)
-  :config
-  (eval-after-load 'inf-ruby
-    '(define-key inf-ruby-minor-mode-map
-       (kbd "C-c C-s") 'inf-ruby-console-auto)))
 
 (use-package rspec-mode
   :commands (rspec-mode)
@@ -236,7 +203,8 @@
 
   (let ((hooks '(enh-ruby-mode-hook
                  python-mode-hook haml-mode-hook
-                 coffee-mode-hook sass-mode-hook)))
+                 coffee-mode-hook sass-mode-hook
+                 yaml-mode-hook org-mode-hook)))
     (dolist (hook hooks)
       (add-hook hook 'highlight-indentation-mode)
       (add-hook hook 'highlight-indentation-current-column-mode))))
@@ -251,8 +219,6 @@
    '(coffee-tab-width 2)))
 
 (use-package sass-mode)
-
-(use-package inflections)
 
 
 ;;;; Load local files
@@ -302,9 +268,6 @@
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
  '(inferior-lisp-program "sbcl" t)
  '(org-agenda-files nil)
- '(package-selected-packages
-   (quote
-    (slime zenburn-theme yaml-mode ws-butler wgrep web-mode use-package ruby-electric rspec-mode popwin php-mode markdown-mode magit inkpot-theme inf-ruby highlight-parentheses highlight-indentation helm-gtags helm-git-grep helm-ag haml-mode flycheck-pyflakes enh-ruby-mode editorconfig dumb-jump creamsody-theme auto-async-byte-compile adoc-mode)))
  '(select-enable-clipboard t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
