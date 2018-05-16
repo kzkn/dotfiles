@@ -71,12 +71,14 @@
 (defun find-file-in-git-ls-files ()
   (interactive)
   (let* ((repo (git-root-directory))
-         (files (shell-command-to-string (format "cd %s && git ls-files" repo))))
+         (files (shell-command-to-string (format "cd %s && git ls-files" repo)))
+         (others (shell-command-to-string (format "cd %s && git ls-files --others --exclude-standard" repo))))
     (find-file
      (concat repo "/"
              (ido-completing-read "Find file: "
                                   (cl-remove-if (lambda (f) (string= f ""))
-                                                (split-string files "\n")))))))
+                                                (append (split-string files "\n")
+                                                        (split-string others "\n"))))))))
 
 (defun sh (&optional arg)
   (interactive "P")
