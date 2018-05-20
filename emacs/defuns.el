@@ -50,11 +50,9 @@
          "")))
 
 (defun git-grep-directory-previous-or-root (root)
-  (or (and git-grep-directory-history
-           (string= (substring git-grep-directory-history 0 (length root))
-                    root)
-           git-grep-directory-history)
-      root))
+  (if (s-starts-with-p root git-grep-directory-history)
+      git-grep-directory-history
+    root))
 
 (defun git-grep (grep-dir command-args)
   (interactive
@@ -112,8 +110,8 @@
 
 (defun ghq-cd ()
   (interactive)
-  (let* ((dirs (shell-command-to-string "ghq list"))
-         (ghq-root (shell-command-to-string "ghq root")))
+  (let* ((dirs (shell-command-to-string "/home/kazuki/go/bin/ghq list"))
+         (ghq-root (shell-command-to-string "/home/kazuki/go/bin/ghq root")))
     (find-file
      (concat (s-chomp ghq-root) "/"
              (ido-completing-read "Select directory: "
