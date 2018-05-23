@@ -125,7 +125,8 @@
   :mode
   (("\\.html?$" . web-mode)
    ("\\.jsx?$" . web-mode)
-   ("\\.json$" . web-mode)))
+   ("\\.json$" . web-mode)
+   ("\\.erb$" . web-mode)))
 
 (use-package ws-butler
   :config
@@ -158,7 +159,7 @@
   (add-hook 'enh-ruby-mode-hook 'set-enh-ruby-mode-face t)
   (add-hook 'enh-ruby-mode-hook 'enable-ruby-flycheck-if-rubocop-yml-exists)
   :mode
-  (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
+  (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|jb\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
 
 (use-package ruby-electric
   :commands (ruby-electric-mode)
