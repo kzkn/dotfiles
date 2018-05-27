@@ -255,6 +255,7 @@
 (bind-key "C-c w" 'whitespace-mode)
 (bind-key "C-c f" 'find-file-in-git-ls-files)
 (bind-key "C-c g" 'ghq-cd)
+(bind-key "C-c n" 'cleanup-buffer)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
