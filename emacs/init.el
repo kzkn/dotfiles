@@ -220,6 +220,7 @@
    '(coffee-tab-width 2)))
 
 (use-package sass-mode)
+(use-package haskell-mode)
 
 
 ;;;; Load local files
