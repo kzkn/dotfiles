@@ -165,13 +165,19 @@
   :commands (ruby-electric-mode)
   :init (add-hook 'enh-ruby-mode-hook 'ruby-electric-mode))
 
+(defun notify-rspec-finish (&rest ignore)
+  (let ((urgency (if rspec-last-failed-specs "critical" "normal"))
+        (message (if rspec-last-failed-specs "Failed" "Succeeded")))
+    (shell-command (format "notify-send --urgency %s 'RSpec completed' '%s'" urgency message))))
+
 (use-package rspec-mode
   :commands (rspec-mode)
   :init
   (add-hook 'enh-ruby-mode-hook 'rspec-mode)
   :config
   (setq rspec-use-spring-when-possible nil
-        rspec-use-bundler-when-possible t))
+        rspec-use-bundler-when-possible t)
+  (add-function :after (symbol-function 'rspec-store-failures) 'notify-rspec-finish))
 
 (defun enable-haml-flycheck-if-haml-lint-yml-exists ()
   (enable-flycheck-if-parent-file-exists ".haml-lint.yml" 'haml-lint))
@@ -190,7 +196,7 @@
   (set-face-background 'highlight-indentation-face "gray20")
   (set-face-background 'highlight-indentation-current-column-face "gray35")
 
-  (defadvice highlight-indentation-guess-offset (around my-highlight-indentation-guess-offset)
+  (defun my-highlight-indentation-guess-offset (orig-fn &rest args)
     (cond ((and (eq major-mode 'enh-ruby-mode) (boundp 'enh-ruby-indent-level))
            (setq ad-return-value enh-ruby-indent-level))
           ((and (eq major-mode 'haml-mode) (boundp 'haml-indent-offset))
@@ -198,9 +204,9 @@
           ((and (eq major-mode 'sass-mode) (boundp 'sass-indent-offset))
            (setq ad-return-value sass-indent-offset))
           (t
-           ad-do-it)))
+           (apply orig-fn args))))
 
-  (ad-activate 'highlight-indentation-guess-offset)
+  (advice-add 'highlight-indentation-guess-offset :around 'my-highlight-indentation-guess-offset)
 
   (let ((hooks '(enh-ruby-mode-hook
                  python-mode-hook haml-mode-hook
