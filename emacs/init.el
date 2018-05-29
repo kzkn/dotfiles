@@ -174,6 +174,7 @@
   :commands (rspec-mode)
   :init
   (add-hook 'enh-ruby-mode-hook 'rspec-mode)
+  (add-hook 'dired-mode-hook 'rspec-mode)
   :config
   (setq rspec-use-spring-when-possible nil
         rspec-use-bundler-when-possible t)
@@ -245,21 +246,16 @@
 ;;;; Global Bindings
 
 (bind-key "M-g" 'goto-line)
-(bind-key "M-+" 'text-scale-increase)
-(bind-key "M-_" 'text-scale-decrease)
 (bind-key "M-k" 'kill-this-buffer)
 (bind-key "M-o" 'other-window)
 (bind-key "M-1" 'delete-other-windows)
 (bind-key "M-2" 'split-window-below)
 (bind-key "M-3" 'split-window-right)
 (bind-key "M-0" 'delete-window)
-(bind-key "M-}" 'next-buffer)
-(bind-key "M-{" 'previous-buffer)
 (bind-key "M-]" 'next-error)
 (bind-key "M-[" 'previous-error)
 
-(bind-key "C-c s" 'swap-windows)
-(bind-key "C-c w" 'whitespace-mode)
+(bind-key "C-c a" 'org-agenda)
 (bind-key "C-c f" 'find-file-in-git-ls-files)
 (bind-key "C-c g" 'ghq-cd)
 (bind-key "C-c n" 'cleanup-buffer)
