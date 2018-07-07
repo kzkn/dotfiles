@@ -24,3 +24,4 @@
 (depends-on "slime")
 (depends-on "ido-grid-mode")
 (depends-on "haskell-mode")
+(depends-on "yasnippet")

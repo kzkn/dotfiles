@@ -120,3 +120,16 @@
 ;; enable downcase-region, upcase-region
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
+
+;; org-mode
+(setq org-agenda-files '("~/notes/todo.org" "~/notes/remember.org"))
+(setq org-log-done 'time)
+(setq org-todo-keywords '((sequence "TODO" "DOING" "|" "DONE")))
+(setq org-modules '(org-habits))
+(setq org-capture-templates
+      '(("t" "TODO" entry
+         (file "~/notes/todo.org")
+         "* TODO %?")
+        ("r" "Remember" entry
+         (file+headline "~/notes/remember.org" "Remember")
+         "** %?\n  %i\n  %a\n  %T")))

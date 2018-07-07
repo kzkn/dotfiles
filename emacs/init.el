@@ -59,13 +59,7 @@
               (setq-local c-basic-offset 2)))
   (add-hook 'java-mode-hook
             (lambda ()
-              (setq-local c-basic-offset 4)))
-  (mapc (lambda (map)
-          (bind-key "C-c c" 'compile-immediate map)
-          (bind-key "C-c n" 'next-error map)
-          (bind-key "C-c p" 'previous-error map))
-        (list c-mode-map
-              c++-mode-map)))
+              (setq-local c-basic-offset 4))))
 
 (use-package highlight-parentheses
   :config
@@ -165,7 +159,7 @@
   :commands (ruby-electric-mode)
   :init (add-hook 'enh-ruby-mode-hook 'ruby-electric-mode))
 
-(defun notify-rspec-finish (&rest ignore)
+(defun notify-rspec-finish ()
   (let ((urgency (if rspec-last-failed-specs "critical" "normal"))
         (message (if rspec-last-failed-specs "Failed" "Succeeded")))
     (shell-command (format "notify-send --urgency %s 'RSpec completed' '%s'" urgency message))))
@@ -174,11 +168,13 @@
   :commands (rspec-mode)
   :init
   (add-hook 'enh-ruby-mode-hook 'rspec-mode)
-  (add-hook 'dired-mode-hook 'rspec-mode)
+  (add-hook 'dired-mode-hook 'rspec-dired-mode)
   :config
   (setq rspec-use-spring-when-possible nil
         rspec-use-bundler-when-possible t)
-  (add-function :after (symbol-function 'rspec-store-failures) 'notify-rspec-finish))
+  (add-hook 'rspec-after-verification-hook 'notify-rspec-finish)
+  (with-eval-after-load 'rspec-mode
+    (rspec-install-snippets)))
 
 (defun enable-haml-flycheck-if-haml-lint-yml-exists ()
   (enable-flycheck-if-parent-file-exists ".haml-lint.yml" 'haml-lint))
@@ -228,6 +224,9 @@
 
 (use-package sass-mode)
 (use-package haskell-mode)
+(use-package yasnippet
+  :init
+  (add-hook 'prog-mode-hook 'yas-minor-mode))
 
 
 ;;;; Load local files
@@ -256,6 +255,7 @@
 (bind-key "M-[" 'previous-error)
 
 (bind-key "C-c a" 'org-agenda)
+(bind-key "C-c c" 'org-capture)
 (bind-key "C-c f" 'find-file-in-git-ls-files)
 (bind-key "C-c g" 'ghq-cd)
 (bind-key "C-c n" 'cleanup-buffer)
@@ -273,7 +273,6 @@
  '(ediff-split-window-function (quote split-window-horizontally))
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
  '(inferior-lisp-program "sbcl" t)
- '(org-agenda-files nil)
  '(select-enable-clipboard t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
