@@ -13,7 +13,7 @@ import XMonad.Util.Run (spawnPipe)
 import XMonad.Util.EZConfig (additionalKeysP)
 import XMonad.Util.NamedScratchpad
 
-myTerminal = "urxvtc -tr -sh 20"
+myTerminal = "urxvtc -tr -sh 50"
 myWorkspaces = map show [1..5]
 
 myBorderWidth = 3
@@ -56,6 +56,7 @@ myLogHook h = dynamicLogWithPP $ xmobarPP
 
 myScratchpads = [
     NS "firefox" "firefox" (className =? "Firefox") defaultFloating
+  , NS "chrome" "google-chrome-stable" (className =? "Google-chrome") defaultFloating
   ]
 
 myBaseConfig = (ewmh . docks) def
@@ -77,4 +78,5 @@ main = do
     [
       ("M-f" , sendMessage ToggleLayout)
     , ("S-M-f" , namedScratchpadAction myScratchpads "firefox")
+    , ("S-M-g" , namedScratchpadAction myScratchpads "chrome")
     ]

@@ -14,6 +14,6 @@ light-locker &
 urxvtd -q -o -f
 firefox &
 synclient TouchpadOff=1
-feh --bg-scale ~/Images/wallpaper.jpg
+feh --bg-scale ~/Images/wallpaper02.jpg
 
 exec xmonad

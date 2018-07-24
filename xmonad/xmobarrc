@@ -13,17 +13,17 @@ Config { font = "xft:Noto Sans CJK JP-10"
        -- , pickBroadest = False
        -- , persistent = False
        -- , hideOnStart = False
-       -- , iconRoot = "."
+       , iconRoot = ".xmonad/icons"
        -- , allDesktops = True
        -- , overrideRedirect = True
-       , commands = [ Run Wireless "wlp2s0" ["-t", "Wifi: <essid> <quality>"] 10
-                    , Run Cpu ["-t", "Cpu: <total>%", "-L","3","-H","50",
+       , commands = [ Run Wireless "wlp2s0" ["-t", "<icon=wifi.xbm/> <essid> <quality>"] 10
+                    , Run Cpu ["-t", "<icon=cpu.xbm/> <total>%", "-L","3","-H","50",
                                "--normal","green","--high","red"] 10
-                    , Run Memory ["-t","Mem: <usedratio>%"] 10
+                    , Run Memory ["-t","<icon=memory.xbm/> <usedratio>%"] 10
                     , Run Date "%a %m-%d %H:%M" "date" 10
                     , Run Com "/home/kazuki/bin/getvolume.sh" [] "myvolume" 10
                     , Run BatteryP ["BAT0"]
-                                   ["-t", "<acstatus> - <left>%",
+                                   ["-t", "<icon=battery_h.xbm/> <acstatus> - <left>%",
                                     "-L", "10", "-H", "80", "-p", "3",
                                     "--", "-O", "<fc=green>On</fc>", "-i", "Idle",
                                     "-o", "<fc=red>Off</fc>",
@@ -35,5 +35,5 @@ Config { font = "xft:Noto Sans CJK JP-10"
        , sepChar = "%"
        , alignSep = "}{"
        , template = "%StdinReader%}{%cpu% | %memory% | %wlp2s0wi%\
-                    \ | %battery% | %myvolume% | <fc=#83c07c>%date%</fc> "
+                    \ | %battery% | <icon=volume.xbm/> %myvolume% | <fc=#83c07c>%date%</fc> "
        }
