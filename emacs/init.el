@@ -228,6 +228,8 @@
   :init
   (add-hook 'prog-mode-hook 'yas-minor-mode))
 
+(use-package vue-mode)
+
 
 ;;;; Load local files
 

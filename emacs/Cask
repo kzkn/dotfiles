@@ -25,3 +25,4 @@
 (depends-on "ido-grid-mode")
 (depends-on "haskell-mode")
 (depends-on "yasnippet")
+(depends-on "vue-mode")
