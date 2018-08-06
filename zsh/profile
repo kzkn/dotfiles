@@ -10,6 +10,7 @@ PATH=$HOME/.cask/bin:$PATH
 PATH=$HOME/.rbenv/bin:$PATH
 PATH=$HOME/bin:$PATH
 PATH=$HOME/go/bin:$PATH
+PATH=$HOME/npm/bin:$PATH
 export PATH
 
 which rbenv 1>/dev/null 2>&1 && eval "$(rbenv init -)"
