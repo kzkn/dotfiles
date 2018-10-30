@@ -124,12 +124,13 @@
 ;; org-mode
 (setq org-agenda-files '("~/notes/todo.org" "~/notes/remember.org"))
 (setq org-log-done 'time)
-(setq org-todo-keywords '((sequence "TODO" "DOING" "|" "DONE")))
+(setq org-startup-truncated nil)
+(setq org-todo-keywords '((sequence "TODO" "DOING" "|" "DONE" "SKIP")))
 (setq org-modules '(org-habits))
 (setq org-capture-templates
       '(("t" "TODO" entry
          (file "~/notes/todo.org")
-         "* TODO %?")
+         "** TODO %?")
         ("r" "Remember" entry
          (file+headline "~/notes/remember.org" "Remember")
          "** %?\n  %i\n  %a\n  %T")))

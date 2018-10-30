@@ -15,6 +15,7 @@
 (depends-on "enh-ruby-mode")
 (depends-on "ruby-electric")
 (depends-on "rspec-mode")
+(depends-on "inf-ruby")
 (depends-on "haml-mode")
 (depends-on "magit")
 (depends-on "highlight-indentation")
@@ -26,3 +27,4 @@
 (depends-on "haskell-mode")
 (depends-on "yasnippet")
 (depends-on "vue-mode")
+(depends-on "ssass-mode")

@@ -115,7 +115,9 @@
   (setq web-mode-markup-indent-offset 2
         web-mode-css-indent-offset 2
         web-mode-code-indent-offset 2
-        web-mode-attr-indent-offset nil)
+        web-mode-attr-indent-offset nil
+        web-mode-script-padding 2
+        web-mode-style-padding 2)
   :mode
   (("\\.html?$" . web-mode)
    ("\\.jsx?$" . web-mode)
@@ -176,6 +178,12 @@
   (with-eval-after-load 'rspec-mode
     (rspec-install-snippets)))
 
+(use-package inf-ruby
+  :commands (inf-ruby-minor-mode)
+  :init
+  (add-hook 'enh-ruby-mode-hook 'inf-ruby-minor-mode)
+  (add-hook 'compilation-filter-hook 'inf-ruby-auto-enter))
+
 (defun enable-haml-flycheck-if-haml-lint-yml-exists ()
   (enable-flycheck-if-parent-file-exists ".haml-lint.yml" 'haml-lint))
 
@@ -218,17 +226,27 @@
   (setq wgrep-auto-save-buffer t))
 
 (use-package coffee-mode
+  :commands (coffee-mode)
   :config
   (custom-set-variables
    '(coffee-tab-width 2)))
 
-(use-package sass-mode)
-(use-package haskell-mode)
+(use-package sass-mode
+  :commands (sass-mode))
+
+(use-package haskell-mode
+  :commands (haskell-mode))
+
 (use-package yasnippet
   :init
   (add-hook 'prog-mode-hook 'yas-minor-mode))
 
-(use-package vue-mode)
+(use-package vue-mode
+  :commands (vue-mode)
+  :config
+  (use-package js
+    :config
+    (setq js-indent-level 2)))
 
 
 ;;;; Load local files
