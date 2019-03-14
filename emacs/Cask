@@ -28,3 +28,4 @@
 (depends-on "yasnippet")
 (depends-on "vue-mode")
 (depends-on "ssass-mode")
+(depends-on "add-node-modules-path")

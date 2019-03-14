@@ -47,19 +47,24 @@
    '(compilation-read-command nil))
   (call-interactively 'compile))
 
+(defun my-c-mode-common-hook ()
+  (c-set-offset 'inextern-lang 0)
+  (c-set-offset 'arglist-intro '++)
+  (c-set-offset 'arglist-close 0)
+  (c-set-offset 'brace-list-intro '+)
+  (setq-local c-default-style "linux")
+  (setq-local indent-tabs-mode nil)
+  (setq-local tab-width 2)
+  (setq-local c-basic-offset 2))
+
+(defun my-java-mode-hook ()
+  (setq-local c-basic-offset 4))
+
 (use-package cc-mode
   :commands (cc-mode)
   :config
-  (add-hook 'c-mode-common-hook
-            (lambda ()
-              (c-set-offset 'inextern-lang 0)
-              (setq-local c-default-style "K&R")
-              (setq-local indent-tabs-mode nil)
-              (setq-local tab-width 2)
-              (setq-local c-basic-offset 2)))
-  (add-hook 'java-mode-hook
-            (lambda ()
-              (setq-local c-basic-offset 4))))
+  (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
+  (add-hook 'java-mode-hook 'my-java-mode-hook))
 
 (use-package highlight-parentheses
   :config
@@ -117,7 +122,8 @@
         web-mode-code-indent-offset 2
         web-mode-attr-indent-offset nil
         web-mode-script-padding 2
-        web-mode-style-padding 2)
+        web-mode-style-padding 2
+        web-mode-content-types-alist '(("jsx"  . ".*\\.js[x]?\\'")))
   :mode
   (("\\.html?$" . web-mode)
    ("\\.jsx?$" . web-mode)
@@ -136,7 +142,10 @@
           lisp-mode-hook
           emacs-lisp-mode-hook)))
 
-(use-package flycheck)
+(use-package flycheck
+  :config
+  (flycheck-add-mode 'javascript-eslint 'vue-html-mode)
+  (flycheck-add-mode 'javascript-eslint 'ssass-mode))
 
 (use-package yaml-mode
   :commands (yaml-mode))
@@ -208,6 +217,8 @@
            (setq ad-return-value haml-indent-offset))
           ((and (eq major-mode 'sass-mode) (boundp 'sass-indent-offset))
            (setq ad-return-value sass-indent-offset))
+          ((and (eq major-mode 'ssass-mode) (boundp 'ssass-tab-width))
+           (setq ad-return-value ssass-tab-width))
           (t
            (apply orig-fn args))))
 
@@ -216,7 +227,8 @@
   (let ((hooks '(enh-ruby-mode-hook
                  python-mode-hook haml-mode-hook
                  coffee-mode-hook sass-mode-hook
-                 yaml-mode-hook org-mode-hook)))
+                 yaml-mode-hook org-mode-hook
+                 vue-mode-hook)))
     (dolist (hook hooks)
       (add-hook hook 'highlight-indentation-mode)
       (add-hook hook 'highlight-indentation-current-column-mode))))
@@ -241,13 +253,61 @@
   :init
   (add-hook 'prog-mode-hook 'yas-minor-mode))
 
+(use-package add-node-modules-path)
+
+(use-package js
+  :config
+  (setq js-indent-level 2))
+
 (use-package vue-mode
   :commands (vue-mode)
   :config
-  (use-package js
-    :config
-    (setq js-indent-level 2)))
+  (add-hook 'vue-mode-hook 'add-node-modules-path)
+  (add-hook 'vue-mode-hook 'flycheck-mode)
+  (custom-set-variables
+   '(vue-html-extra-indent 2)))
 
+(use-package ssass-mode
+  :commands (ssass-mode)
+  :config
+  (defun ssass-indent ()
+    "Indent the current line."
+    (interactive)
+    (indent-line-to
+     (cond
+      ((and (not ssass-indent-blanks) (ssass--whitespace-p 0)) 0)
+      ((ssass--whitespace-p -1) 0)
+      ((ssass--no-anchor-line-p) 0)
+      ((ssass--comma-before-p) (ssass--last-anchor-line-indent-level))
+      ;; ここが増えた。セレクタ行は自動インデントしない
+      ((ssass--selector-p (buffer-substring (point-at-bol) (point-at-eol)))
+       (current-indentation))
+      (t
+       (+ ssass-tab-width (ssass--last-anchor-line-indent-level))))))
+
+  (defun my/ssass-dedent (n)
+    (interactive "p")
+    (if (= (point) (+ (point-at-bol) (current-indentation)))
+        (ssass-dedent)
+      (delete-backward-char n)))
+
+  (defun my/ssass-indent-cyclic ()
+    (interactive)
+    (let* ((curr (current-indentation))
+           (curr (- curr (mod curr ssass-tab-width)))
+           (next (+ curr ssass-tab-width))
+           (max-indent (+ ssass-tab-width (ssass--last-anchor-line-indent-level))))
+      (indent-line-to (if (< max-indent next)
+                          0
+                        next))))
+
+  ;; [backspace] としたいところだけど効かなかった
+  (bind-key "\177" 'my/ssass-dedent ssass-mode-map)
+  (bind-key "C-i" 'my/ssass-indent-cyclic ssass-mode-map))
+
+(use-package sqlformat
+  :config
+  (add-hook 'sql-mode-hook 'sqlformat-on-save-mode))
 
 ;;;; Load local files
 
