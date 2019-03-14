@@ -71,7 +71,7 @@
   (let ((sym (symbol-at-point)))
     (when sym
       (let* ((symbol-string (regexp-quote (symbol-name sym)))
-             (command (format "PAGER='' git -C '%s' grep -I -n -i '%s'"
+             (command (format "PAGER='' git --work-tree '%s' grep -I -n -i '%s'"
                               (git-root-directory) symbol-string)))
         (grep command)))))
 
