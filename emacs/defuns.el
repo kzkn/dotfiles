@@ -66,6 +66,15 @@
   (let ((command (format "cd %s && %s" grep-dir command-args)))
     (grep command)))
 
+(defun git-grep-symbol-at-point ()
+  (interactive)
+  (let ((sym (symbol-at-point)))
+    (when sym
+      (let* ((symbol-string (regexp-quote (symbol-name sym)))
+             (command (format "PAGER='' git -C '%s' grep -I -n -i '%s'"
+                              (git-root-directory) symbol-string)))
+        (grep command)))))
+
 (defun find-file-in-git-ls-files ()
   (interactive)
   (let* ((repo (git-root-directory))

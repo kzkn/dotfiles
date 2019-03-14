@@ -324,7 +324,6 @@
 
 ;;;; Global Bindings
 
-(bind-key "M-g" 'goto-line)
 (bind-key "M-k" 'kill-this-buffer)
 (bind-key "M-o" 'other-window)
 (bind-key "M-1" 'delete-other-windows)
@@ -333,6 +332,7 @@
 (bind-key "M-0" 'delete-window)
 (bind-key "M-]" 'next-error)
 (bind-key "M-[" 'previous-error)
+(bind-key "M-g" 'git-grep-symbol-at-point)
 
 (bind-key "C-c a" 'org-agenda)
 (bind-key "C-c c" 'org-capture)
