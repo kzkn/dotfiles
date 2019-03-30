@@ -84,18 +84,15 @@
 
 (defun rspecr--refresh ()
   (let ((files (rspecr--result-files))
-        (buf (get-buffer-create " *RSpec Results*")))
-    (with-current-buffer buf
-      (let ((inhibit-read-only t))
-        (erase-buffer)
-        (rspecr--insert-header-line)
-        (let (f)
-          (while files
-            (setq f (car files))
-            (rspecr--insert-result-file-line f)
-            (newline 1)
-            (setq files (cdr files))))))
-    buf))
+        (inhibit-read-only t))
+    (erase-buffer)
+    (rspecr--insert-header-line)
+    (let (f)
+      (while files
+        (setq f (car files))
+        (rspecr--insert-result-file-line f)
+        (newline 1)
+        (setq files (cdr files))))))
 
 (defun rspecr--show-list ()
   (switch-to-buffer (rspecr--refresh))
@@ -139,6 +136,26 @@
     (search-forward "RSpec Compilation started at ")
     (buffer-substring (point) (progn (end-of-line) (point)))))
 
+;; (define-derived-mode rspec-result-list-mode tabulated-list-mode "RSpec Result"
+;;   (setq tabulated-list-format
+;;         `[("Package" 18 package-menu--name-predicate)
+;;           ("Version" 13 nil)
+;;           ("Status"  10 package-menu--status-predicate)
+;;           ,@(if (cdr package-archives)
+;;                 '(("Archive" 10 package-menu--archive-predicate)))
+;;           ("Description" 0 nil)])
+;;   (setq tabulated-list-padding 2)
+;;   (setq tabulated-list-sort-key (cons "Status" nil))
+;;   (add-hook 'tabulated-list-revert-hook 'package-menu--refresh nil t)
+;;   (tabulated-list-init-header))
+
+(defun rspec-result-mode ()
+  (add-hook 'rspec-after-verification-hook 'rspecr-save-rspec-result)
+  (use-local-map rspecr-mode-map)
+  (setq major-mode 'rspecr-mode
+        mode-name "RSpec Result"
+        buffer-read-only t))
+
 (defun rspecr-save-rspec-result ()
   (let ((path (rspecr--make-rspec-result-path)))
     (write-region (point-min) (point-max) path)
@@ -178,9 +195,10 @@
 
 (defun rspecr ()
   (interactive)
-  (add-hook 'rspec-after-verification-hook 'rspecr-save-rspec-result)
-  (rspecr--show-list)
-  (use-local-map rspecr-mode-map)
-  (setq major-mode 'rspecr-mode
-        mode-name "RSpec Result"
-        buffer-read-only t))
+  (let ((buf (get-buffer-create "*RSpec Results*")))
+    (with-current-buffer buf
+      (rspec-result-mode)
+      (rspecr--refresh))
+    (switch-to-buffer buf)
+    (goto-char (point-min))
+    (forward-line 2)))
