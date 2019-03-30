@@ -1,9 +1,19 @@
 ;; 実際したい機能
-;;  - [ ] 一覧をキレイに
+;;  - [X] 一覧をキレイに
 ;;  - [ ] 一覧に git のコミットを表示できる
+
+(eval-when-compile (require 'cl-lib))
 
 (defvar rspecr--result-file-prefix "rspecr-")
 (defvar rspecr--result-dir-name "rspec-results")
+
+(cl-defstruct rspec-result-desc
+  path
+  project
+  started-at
+  successes
+  failures
+  pendings)
 
 (defun rspecr--rspec-result-files-directory ()
   (let ((dir (expand-file-name
@@ -20,61 +30,8 @@
 (defun rspecr--rspec-result-file-p (f)
   (string-prefix-p rspecr--result-file-prefix f))
 
-(defun rspecr--list-result-files (dir)
-  (let ((files (directory-files dir))
-        f result-files)
-    (while files
-      (setq f (car files))
-      (when (rspecr--rspec-result-file-p f)
-        (push (concat dir f) result-files))
-      (setq files (cdr files)))
-    result-files))
-
-(defun rspecr--result-files ()
-  (let ((dir (rspecr--rspec-result-files-directory)))
-    (and (file-directory-p dir) (rspecr--list-result-files dir))))
-
-(defun rspecr--print-info (file)
-  (let* ((count (rspecr--count-spec-results file))
-         (total (car count))
-         (failures (cadr count))
-         (pendings (caddr count))
-         (successes (- total failures pendings)))
-    (list file
-          `[,(rspecr--started-at file)
-            (,(rspecr--project-root file)
-             rspecr-result-file-name ,file)
-            (,(number-to-string successes)
-             face ,compilation-info-face)
-            (,(number-to-string failures)
-             face ,compilation-error-face)
-            (,(number-to-string pendings)
-             face ,font-lock-function-name-face)
-            ])))
-
-(defun rspecr--refresh ()
-  (let ((files (rspecr--result-files)))
-    (tabulated-list-init-header)
-    (setq tabulated-list-entries (mapcar 'rspecr--print-info files))))
-
-(defun rspecr--current-line-file-path ()
-  (tabulated-list-get-id))
-
-(defun rspecr--count-spec-results (file)
-  (with-temp-buffer
-    (insert-file-contents file)
-    (goto-char (point-max))
-    (re-search-backward "^\\([0-9]+\\) examples?\\(, \\([0-9]+\\) failures?\\(, \\([0-9]+\\) pendings?\\)?\\)")
-    (let ((total (match-string-no-properties 1))
-          (failures (and (match-beginning 3) (match-string-no-properties 3)))
-          (pendings (and (match-beginning 5) (match-string-no-properties 5))))
-      (mapcar (lambda (n)
-                (if (null n) 0 (string-to-number n)))
-              (list total failures pendings)))))
-
-(defun rspecr--project-root (file)
-  (with-temp-buffer
-    (insert-file-contents file)
+(defun rspecr--rspec-result-project ()
+  (save-restriction
     (narrow-to-region (point) (progn (forward-line) (point)))
     (goto-char (point-min))
     (re-search-forward "; default-directory: \"\\(.*\\)\" -\\*-$")
@@ -82,17 +39,78 @@
            (root (rspec-project-root default-dir)))
       (file-name-nondirectory (directory-file-name root)))))
 
-(defun rspecr--started-at (file)
-  (with-temp-buffer
-    (insert-file-contents file)
+(defun rspecr--rspec-result-started-at ()
+  (save-restriction
     (narrow-to-region (progn (forward-line) (point)) (progn (forward-line) (point)))
     (goto-char (point-min))
     (search-forward "RSpec Compilation started at ")
     (buffer-substring (point) (progn (end-of-line) (point)))))
 
+(defun rspecr--rspec-result-counts ()
+  (goto-char (point-max))
+  (re-search-backward "^\\([0-9]+\\) examples?\\(, \\([0-9]+\\) failures?\\(, \\([0-9]+\\) pendings?\\)?\\)")
+  (let ((total (match-string-no-properties 1))
+        (failures (and (match-beginning 3) (match-string-no-properties 3)))
+        (pendings (and (match-beginning 5) (match-string-no-properties 5))))
+    (mapcar (lambda (n)
+              (if (null n) 0 (string-to-number n)))
+            (list total failures pendings))))
+
+(defun rspecr--make-rspec-result-desc (file)
+  (with-temp-buffer
+    (insert-file-contents file)
+    (let* ((project (rspecr--rspec-result-project))
+           (started-at (rspecr--rspec-result-started-at))
+           (counts (rspecr--rspec-result-counts))
+           (total (car counts))
+           (failures (cadr counts))
+           (pendings (caddr counts))
+           (successes (- total failures pendings)))
+      (make-rspec-result-desc
+       :path file
+       :project project
+       :started-at started-at
+       :successes successes
+       :failures failures
+       :pendings pendings))))
+
+(defun rspecr--list-result-descriptions (dir)
+  (let ((files (directory-files dir))
+        f descs)
+    (while files
+      (setq f (car files))
+      (when (rspecr--rspec-result-file-p f)
+        (push (rspecr--make-rspec-result-desc (concat dir f)) descs))
+      (setq files (cdr files)))
+    descs))
+
+(defun rspecr--result-descriptions ()
+  (let ((dir (rspecr--rspec-result-files-directory)))
+    (and (file-directory-p dir) (rspecr--list-result-descriptions dir))))
+
+(defun rspecr--print-info (desc)
+  (list desc
+        `[,(rspec-result-desc-started-at desc)
+          ,(rspec-result-desc-project desc)
+          (,(number-to-string (rspec-result-desc-successes desc))
+           face ,compilation-info-face)
+          (,(number-to-string (rspec-result-desc-failures desc))
+           face ,compilation-error-face)
+          (,(number-to-string (rspec-result-desc-pendings desc))
+           face ,font-lock-function-name-face)
+          ]))
+
+(defun rspecr--refresh ()
+  (let ((descs (rspecr--result-descriptions)))
+    (tabulated-list-init-header)
+    (setq tabulated-list-entries (mapcar 'rspecr--print-info descs))))
+
+(defun rspecr--current-line-file-path ()
+  (rspec-result-desc-path (tabulated-list-get-id)))
+
 (define-derived-mode rspec-result-list-mode tabulated-list-mode "RSpec Result"
   (setq tabulated-list-format `[("Started" 19 t)
-                                ("Project" 20 t)
+                                ("Project" 18 t)
                                 ("Succ" 4 nil)
                                 ("Fail" 4 nil)
                                 ("Pend" 4 nil)])
