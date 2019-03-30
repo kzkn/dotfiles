@@ -1,7 +1,3 @@
-;; 実際したい機能
-;;  - [X] 一覧をキレイに
-;;  - [ ] 一覧に git のコミットを表示できる
-
 (eval-when-compile (require 'cl-lib))
 
 (defvar rspecr--result-file-prefix "rspecr-")
@@ -13,7 +9,8 @@
   started-at
   successes
   failures
-  pendings)
+  pendings
+  commit-desc)
 
 (defun rspecr--rspec-result-files-directory ()
   (let ((dir (expand-file-name
@@ -35,7 +32,8 @@
     (insert-file-contents file)
     (read (current-buffer))))
 
-(defun rspecr--persisted-result-contents (pr) (car pr))
+(defun rspecr--persisted-result-result (pr) (nth 0 pr))
+(defun rspecr--persisted-result-commit-desc (pr) (nth 1 pr))
 
 (defun rspecr--rspec-result-project ()
   (save-restriction
@@ -66,7 +64,7 @@
 (defun rspecr--make-rspec-result-desc (file)
   (let ((persisted-result (rspecr--read-persisted-result file)))
     (with-temp-buffer
-      (insert (rspecr--persisted-result-contents persisted-result))
+      (insert (rspecr--persisted-result-result persisted-result))
       (goto-char (point-min))
       (let* ((project (rspecr--rspec-result-project))
              (started-at (rspecr--rspec-result-started-at))
@@ -81,7 +79,8 @@
          :started-at started-at
          :successes successes
          :failures failures
-         :pendings pendings)))))
+         :pendings pendings
+         :commit-desc (rspecr--persisted-result-commit-desc persisted-result))))))
 
 (defun rspecr--list-result-descriptions (dir)
   (let ((files (directory-files dir))
@@ -107,6 +106,7 @@
            face ,compilation-error-face)
           (,(number-to-string (rspec-result-desc-pendings desc))
            face ,font-lock-function-name-face)
+          ,(rspec-result-desc-commit-desc desc)
           ]))
 
 (defun rspecr--refresh ()
@@ -123,7 +123,7 @@
       (with-current-buffer buf
         (let ((inhibit-read-only t))
           (erase-buffer)
-          (insert (rspecr--persisted-result-contents persisted-result))
+          (insert (rspecr--persisted-result-result persisted-result))
           (hack-local-variables)  ; apply file local variables
           (goto-char (point-min))))
       (switch-to-buffer buf))))
@@ -133,16 +133,28 @@
                                 ("Project" 18 t)
                                 ("Succ" 4 nil)
                                 ("Fail" 4 nil)
-                                ("Pend" 4 nil)])
+                                ("Pend" 4 nil)
+                                ("Commit" 0 nil)])
   (setq tabulated-list-sort-key (cons "Started" t))
   (add-hook 'tabulated-list-revert-hook 'rspecr--refresh nil t)
   (tabulated-list-init-header))
 
+(defun rspecr--buffer-substring-first-line ()
+  (save-excursion
+    (goto-char (point-min))
+    (buffer-substring (point) (progn (end-of-line) (point)))))
+
+(defun rspecr--current-git-commit-desc ()
+  (with-temp-buffer
+    (call-process "git" nil (current-buffer) nil "log" "-1" "--oneline")
+    (rspecr--buffer-substring-first-line)))
+
 (defun rspecr-save-rspec-result ()
-  (let ((rspec-result-content (buffer-substring-no-properties (point-min) (point-max)))
+  (let ((result (buffer-substring-no-properties (point-min) (point-max)))
+        (commit-desc (rspecr--current-git-commit-desc))
         (path (rspecr--make-rspec-result-path)))
     (with-temp-buffer
-      (prin1 (list rspec-result-content) (current-buffer))
+      (prin1 (list result commit-desc) (current-buffer))
       (write-file path))
     path))
 
