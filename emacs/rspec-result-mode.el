@@ -30,6 +30,13 @@
 (defun rspecr--rspec-result-file-p (f)
   (string-prefix-p rspecr--result-file-prefix f))
 
+(defun rspecr--read-persisted-result (file)
+  (with-temp-buffer
+    (insert-file-contents file)
+    (read (current-buffer))))
+
+(defun rspecr--persisted-result-contents (pr) (car pr))
+
 (defun rspecr--rspec-result-project ()
   (save-restriction
     (narrow-to-region (point) (progn (forward-line) (point)))
@@ -57,22 +64,24 @@
             (list total failures pendings))))
 
 (defun rspecr--make-rspec-result-desc (file)
-  (with-temp-buffer
-    (insert-file-contents file)
-    (let* ((project (rspecr--rspec-result-project))
-           (started-at (rspecr--rspec-result-started-at))
-           (counts (rspecr--rspec-result-counts))
-           (total (car counts))
-           (failures (cadr counts))
-           (pendings (caddr counts))
-           (successes (- total failures pendings)))
-      (make-rspec-result-desc
-       :path file
-       :project project
-       :started-at started-at
-       :successes successes
-       :failures failures
-       :pendings pendings))))
+  (let ((persisted-result (rspecr--read-persisted-result file)))
+    (with-temp-buffer
+      (insert (rspecr--persisted-result-contents persisted-result))
+      (goto-char (point-min))
+      (let* ((project (rspecr--rspec-result-project))
+             (started-at (rspecr--rspec-result-started-at))
+             (counts (rspecr--rspec-result-counts))
+             (total (car counts))
+             (failures (cadr counts))
+             (pendings (caddr counts))
+             (successes (- total failures pendings)))
+        (make-rspec-result-desc
+         :path file
+         :project project
+         :started-at started-at
+         :successes successes
+         :failures failures
+         :pendings pendings)))))
 
 (defun rspecr--list-result-descriptions (dir)
   (let ((files (directory-files dir))
@@ -108,6 +117,17 @@
 (defun rspecr--current-line-file-path ()
   (rspec-result-desc-path (tabulated-list-get-id)))
 
+(defun rspecr--show-persisted-rspec-result (file)
+  (let ((persisted-result (rspecr--read-persisted-result file)))
+    (let ((buf (get-buffer-create "*RSpec Result*")))
+      (with-current-buffer buf
+        (let ((inhibit-read-only t))
+          (erase-buffer)
+          (insert (rspecr--persisted-result-contents persisted-result))
+          (hack-local-variables)  ; apply file local variables
+          (goto-char (point-min))))
+      (switch-to-buffer buf))))
+
 (define-derived-mode rspec-result-list-mode tabulated-list-mode "RSpec Result"
   (setq tabulated-list-format `[("Started" 19 t)
                                 ("Project" 18 t)
@@ -119,14 +139,17 @@
   (tabulated-list-init-header))
 
 (defun rspecr-save-rspec-result ()
-  (let ((path (rspecr--make-rspec-result-path)))
-    (write-region (point-min) (point-max) path)
+  (let ((rspec-result-content (buffer-substring-no-properties (point-min) (point-max)))
+        (path (rspecr--make-rspec-result-path)))
+    (with-temp-buffer
+      (prin1 (list rspec-result-content) (current-buffer))
+      (write-file path))
     path))
 
 (defun rspecr-show ()
   (interactive)
   (let ((f (rspecr--current-line-file-path)))
-    (find-file f)))
+    (rspecr--show-persisted-rspec-result f)))
 
 (defun rspecr-delete-result-file ()
   (interactive)
