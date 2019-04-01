@@ -6,7 +6,7 @@
 (cl-defstruct rspec-result-desc
   path
   project
-  started-at
+  finished-at
   successes
   failures
   pendings
@@ -34,6 +34,7 @@
 
 (defun rspecr--persisted-result-result (pr) (nth 0 pr))
 (defun rspecr--persisted-result-commit-desc (pr) (nth 1 pr))
+(defun rspecr--persisted-result-finished-at (pr) (nth 2 pr))
 
 (defun rspecr--rspec-result-project ()
   (save-restriction
@@ -43,13 +44,6 @@
     (let* ((default-dir (match-string-no-properties 1))
            (root (rspec-project-root default-dir)))
       (file-name-nondirectory (directory-file-name root)))))
-
-(defun rspecr--rspec-result-started-at ()
-  (save-restriction
-    (narrow-to-region (progn (forward-line) (point)) (progn (forward-line) (point)))
-    (goto-char (point-min))
-    (search-forward "RSpec Compilation started at ")
-    (buffer-substring (point) (progn (end-of-line) (point)))))
 
 (defun rspecr--rspec-result-counts ()
   (goto-char (point-max))
@@ -67,7 +61,7 @@
       (insert (rspecr--persisted-result-result persisted-result))
       (goto-char (point-min))
       (let* ((project (rspecr--rspec-result-project))
-             (started-at (rspecr--rspec-result-started-at))
+             (finished-at (rspecr--persisted-result-finished-at persisted-result))
              (counts (rspecr--rspec-result-counts))
              (total (car counts))
              (failures (cadr counts))
@@ -76,7 +70,7 @@
         (make-rspec-result-desc
          :path file
          :project project
-         :started-at started-at
+         :finished-at finished-at
          :successes successes
          :failures failures
          :pendings pendings
@@ -98,7 +92,7 @@
 
 (defun rspecr--print-info (desc)
   (list desc
-        `[,(rspec-result-desc-started-at desc)
+        `[,(format-time-string "%F %T" (rspec-result-desc-finished-at desc))
           ,(rspec-result-desc-project desc)
           (,(number-to-string (rspec-result-desc-successes desc))
            face ,compilation-info-face)
@@ -128,14 +122,18 @@
           (goto-char (point-min))))
       (switch-to-buffer buf))))
 
+(defun rspecr--finished-at-less-p (a b)
+  (time-less-p (rspec-result-desc-finished-at (car a))
+               (rspec-result-desc-finished-at (car b))))
+
 (define-derived-mode rspec-result-list-mode tabulated-list-mode "RSpec Result"
-  (setq tabulated-list-format `[("Started" 19 t)
+  (setq tabulated-list-format `[("Finished" 19 rspecr--finished-at-less-p)
                                 ("Project" 18 t)
                                 ("Succ" 4 nil)
                                 ("Fail" 4 nil)
                                 ("Pend" 4 nil)
                                 ("Commit" 0 nil)])
-  (setq tabulated-list-sort-key (cons "Started" t))
+  (setq tabulated-list-sort-key (cons "Finished" t))
   (add-hook 'tabulated-list-revert-hook 'rspecr--refresh nil t)
   (tabulated-list-init-header))
 
@@ -152,9 +150,10 @@
 (defun rspecr-save-rspec-result ()
   (let ((result (buffer-substring-no-properties (point-min) (point-max)))
         (commit-desc (rspecr--current-git-commit-desc))
-        (path (rspecr--make-rspec-result-path)))
+        (path (rspecr--make-rspec-result-path))
+        (time (current-time)))
     (with-temp-buffer
-      (prin1 (list result commit-desc) (current-buffer))
+      (prin1 (list result commit-desc time) (current-buffer))
       (write-file path))
     path))
 
