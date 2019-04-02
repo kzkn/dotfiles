@@ -163,9 +163,9 @@
   (let ((f (rspecr--current-line-file-path)))
     (rspecr--show-persisted-rspec-result f)))
 
-(defun rspecr-mark-delete ()
+(defun rspecr-mark ()
   (interactive)
-  (tabulated-list-put-tag "D" t))
+  (tabulated-list-put-tag "*" t))
 
 (defun rspecr-unmark ()
   (interactive)
@@ -178,28 +178,31 @@
     (while (not (eobp))
       (tabulated-list-put-tag " " t))))
 
-(defun rspecr--delete-current-line-file ()
-  (let ((f (rspecr--current-line-file-path)))
-    (delete-file f)))
+(defun rspecr--marked-p ()
+  (save-excursion
+    (char-equal ?\* (progn (beginning-of-line) (char-after)))))
 
-(defun rspecr--execute-current-line ()
-  (let ((cmd (char-after)))
-    (case cmd
-      (?\D (rspecr--delete-current-line-file)))))
+(defmacro rspecr--each-marked-lines (&rest body)
+  (declare (indent defun))
+  `(progn
+     (goto-char (point-min))
+     (while (not (eobp))
+       (when (rspecr--marked-p)
+         (progn ,@body))
+       (forward-line))
+     (tabulated-list-revert)))
 
-(defun rspecr-execute ()
+(defun rspecr-do-delete ()
   (interactive)
-  (goto-char (point-min))
-  (while (not (eobp))
-    (rspecr--execute-current-line)
-    (forward-line))
-  (tabulated-list-revert))
+  (rspecr--each-marked-lines
+    (let ((f (rspecr--current-line-file-path)))
+      (delete-file f))))
 
 (defvar rspec-result-list-mode-map (make-sparse-keymap))
-(define-key rspec-result-list-mode-map "d" 'rspecr-mark-delete)
+(define-key rspec-result-list-mode-map "m" 'rspecr-mark)
 (define-key rspec-result-list-mode-map "u" 'rspecr-unmark)
 (define-key rspec-result-list-mode-map "U" 'rspecr-unmark-all)
-(define-key rspec-result-list-mode-map "x" 'rspecr-execute)
+(define-key rspec-result-list-mode-map "D" 'rspecr-do-delete)
 (define-key rspec-result-list-mode-map "\C-m" 'rspecr-show)
 
 (defun rspecr ()
