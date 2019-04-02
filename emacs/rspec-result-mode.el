@@ -10,7 +10,9 @@
   successes
   failures
   pendings
-  commit-desc)
+  commit-desc
+  directory
+  arguments)
 
 (defun rspecr--rspec-result-files-directory ()
   (let ((dir (expand-file-name
@@ -35,6 +37,8 @@
 (defun rspecr--persisted-result-result (pr) (nth 0 pr))
 (defun rspecr--persisted-result-commit-desc (pr) (nth 1 pr))
 (defun rspecr--persisted-result-finished-at (pr) (nth 2 pr))
+(defun rspecr--persisted-result-directory (pr) (nth 3 pr))
+(defun rspecr--persisted-result-arguments (pr) (nth 4 pr))
 
 (defun rspecr--rspec-result-project ()
   (save-restriction
@@ -74,7 +78,9 @@
          :successes successes
          :failures failures
          :pendings pendings
-         :commit-desc (rspecr--persisted-result-commit-desc persisted-result))))))
+         :commit-desc (rspecr--persisted-result-commit-desc persisted-result)
+         :directory (rspecr--persisted-result-directory persisted-result)
+         :arguments (rspecr--persisted-result-arguments persisted-result))))))
 
 (defun rspecr--list-result-descriptions (dir)
   (let ((files (directory-files dir))
@@ -152,9 +158,11 @@
   (let ((result (buffer-substring-no-properties (point-min) (point-max)))
         (commit-desc (rspecr--current-git-commit-desc))
         (path (rspecr--make-rspec-result-path))
-        (time (current-time)))
+        (time (current-time))
+        (dir rspec-last-directory)
+        (args rspec-last-arguments))
     (with-temp-buffer
-      (prin1 (list result commit-desc time) (current-buffer))
+      (prin1 (list result commit-desc time dir args) (current-buffer))
       (write-file path))
     path))
 
@@ -207,7 +215,15 @@
     (let ((f (rspecr--current-line-file-path)))
       (delete-file f))))
 
+(defun rspecr-run ()
+  (interactive)
+  (when (y-or-n-p "Run?")
+    (let* ((desc (tabulated-list-get-id))
+           (default-directory (rspec-result-desc-directory desc)))
+      (apply #'rspec-compile (rspec-result-desc-arguments desc)))))
+
 (defvar rspec-result-list-mode-map (make-sparse-keymap))
+(define-key rspec-result-list-mode-map "r" 'rspecr-run)
 (define-key rspec-result-list-mode-map "m" 'rspecr-mark)
 (define-key rspec-result-list-mode-map "u" 'rspecr-unmark)
 (define-key rspec-result-list-mode-map "U" 'rspecr-unmark-all)
