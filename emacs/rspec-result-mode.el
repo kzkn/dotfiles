@@ -182,6 +182,15 @@
   (save-excursion
     (char-equal ?\* (progn (beginning-of-line) (char-after)))))
 
+(defun rspecr-toggle ()
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (not (eobp))
+      (if (rspecr--marked-p)
+          (rspecr-unmark)
+        (rspecr-mark)))))
+
 (defmacro rspecr--each-marked-lines (&rest body)
   (declare (indent defun))
   `(progn
@@ -202,6 +211,7 @@
 (define-key rspec-result-list-mode-map "m" 'rspecr-mark)
 (define-key rspec-result-list-mode-map "u" 'rspecr-unmark)
 (define-key rspec-result-list-mode-map "U" 'rspecr-unmark-all)
+(define-key rspec-result-list-mode-map "t" 'rspecr-toggle)
 (define-key rspec-result-list-mode-map "D" 'rspecr-do-delete)
 (define-key rspec-result-list-mode-map "\C-m" 'rspecr-show)
 
