@@ -134,6 +134,7 @@
                                 ("Pend" 4 nil)
                                 ("Commit" 0 nil)])
   (setq tabulated-list-sort-key (cons "Finished" t))
+  (setq tabulated-list-padding 2)
   (add-hook 'tabulated-list-revert-hook 'rspecr--refresh nil t)
   (tabulated-list-init-header))
 
@@ -162,15 +163,43 @@
   (let ((f (rspecr--current-line-file-path)))
     (rspecr--show-persisted-rspec-result f)))
 
-(defun rspecr-delete-result-file ()
+(defun rspecr-mark-delete ()
   (interactive)
+  (tabulated-list-put-tag "D" t))
+
+(defun rspecr-unmark ()
+  (interactive)
+  (tabulated-list-put-tag " " t))
+
+(defun rspecr-unmark-all ()
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (not (eobp))
+      (tabulated-list-put-tag " " t))))
+
+(defun rspecr--delete-current-line-file ()
   (let ((f (rspecr--current-line-file-path)))
-    (when (y-or-n-p (format "Delete %s " f))
-      (delete-file f)
-      (tabulated-list-revert))))
+    (delete-file f)))
+
+(defun rspecr--execute-current-line ()
+  (let ((cmd (char-after)))
+    (case cmd
+      (?\D (rspecr--delete-current-line-file)))))
+
+(defun rspecr-execute ()
+  (interactive)
+  (goto-char (point-min))
+  (while (not (eobp))
+    (rspecr--execute-current-line)
+    (forward-line))
+  (tabulated-list-revert))
 
 (defvar rspec-result-list-mode-map (make-sparse-keymap))
-(define-key rspec-result-list-mode-map "D" 'rspecr-delete-result-file)
+(define-key rspec-result-list-mode-map "d" 'rspecr-mark-delete)
+(define-key rspec-result-list-mode-map "u" 'rspecr-unmark)
+(define-key rspec-result-list-mode-map "U" 'rspecr-unmark-all)
+(define-key rspec-result-list-mode-map "x" 'rspecr-execute)
 (define-key rspec-result-list-mode-map "\C-m" 'rspecr-show)
 
 (defun rspecr ()
