@@ -184,6 +184,7 @@
   (setq rspec-use-spring-when-possible nil
         rspec-use-bundler-when-possible t)
   (add-hook 'rspec-after-verification-hook 'notify-rspec-finish)
+  (add-hook 'rspec-after-verification-hook 'rspecr-save-rspec-result)
   (with-eval-after-load 'rspec-mode
     (rspec-install-snippets)))
 
