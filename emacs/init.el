@@ -310,6 +310,43 @@
   :config
   (add-hook 'sql-mode-hook 'sqlformat-on-save-mode))
 
+(use-package hydra
+  :commands
+  (hydra-error/body hydra-window/body)
+  :bind
+  (("M-o" . hydra-window/body))
+  :config
+  (defhydra hydra-error (global-map "M-g")
+    "goto-error"
+    ("h" first-error "first")
+    ("j" next-error "next")
+    ("k" previous-error "prev")
+    ("v" recenter-top-bottom "recenter")
+    ("q" nil "quit"))
+
+  (defhydra hydra-window ()
+    "window"
+    ("h" windmove-left nil)
+    ("j" windmove-down nil)
+    ("k" windmove-up nil)
+    ("l" windmove-right nil)
+    ("v" (lambda ()
+           (interactive)
+           (split-window-right)
+           (windmove-right))
+     "vert")
+    ("x" (lambda ()
+           (interactive)
+           (split-window-below)
+           (windmove-down))
+     "horz")
+    ("o" delete-other-windows "one" :exit t)
+    ("b" ido-switch-buffer "buf")
+    ("g" ghq-cd "ghq")
+    ("f" find-file-in-git-ls-files "git ls")
+    ("q" nil "cancel")))
+
+
 ;;;; Load local files
 
 (defun load-x (file &rest args)
@@ -323,25 +360,13 @@
 (load-x "flycheck-checker")
 (load-x "rspec-result-mode")
 
-
 ;;;; Global Bindings
-;; m-a, m-c, m-e, m-h, m-i, m-n, m-p
-;; C-q
 (bind-key "M-k" 'kill-this-buffer)
-(bind-key "M-o" 'other-window)
-(bind-key "M-1" 'delete-other-windows)
-(bind-key "M-2" 'split-window-below)
-(bind-key "M-3" 'split-window-right)
-(bind-key "M-0" 'delete-window)
-(bind-key "M-]" 'next-error)
-(bind-key "M-[" 'previous-error)
-(bind-key "M-g" 'goto-line)
+(bind-key "M-g g" 'goto-line)
 (bind-key "M-r" 'git-grep-symbol-at-point)
 
 (bind-key "C-c a" 'org-agenda)
 (bind-key "C-c c" 'org-capture)
-(bind-key "C-c f" 'find-file-in-git-ls-files)
-(bind-key "C-c g" 'ghq-cd)
 (bind-key "C-c n" 'cleanup-buffer)
 
 (custom-set-variables
