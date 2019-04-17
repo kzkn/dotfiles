@@ -211,9 +211,10 @@
 
 (defun rspecr-do-delete ()
   (interactive)
-  (rspecr--each-marked-lines
-    (let ((f (rspecr--current-line-file-path)))
-      (delete-file f))))
+  (when (y-or-n-p "Delete results?")
+    (rspecr--each-marked-lines
+      (let ((f (rspecr--current-line-file-path)))
+        (delete-file f)))))
 
 (defun rspecr-run ()
   (interactive)
