@@ -77,6 +77,8 @@ main = do
     `additionalKeysP`
     [
       ("M-f" , sendMessage ToggleLayout)
+    , ("M-p" , spawn "rofi -show run")
+    , ("S-M-p" , spawn "rofi -show ssh")
     , ("S-M-f" , namedScratchpadAction myScratchpads "firefox")
     , ("S-M-g" , namedScratchpadAction myScratchpads "chrome")
     ]
