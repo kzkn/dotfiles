@@ -5,6 +5,7 @@
 
 ;;;; Packages
 (require 'use-package)
+(require 'cl-lib)
 
 (use-package ido
   :config
@@ -20,23 +21,63 @@
   :config
   (ido-grid-mode 1))
 
+(use-package eglot
+  :commands (eglot eglot-ensure)
+  :config
+  (defclass eglot-vls (eglot-lsp-server) ()
+    :documentation "Vue Language Server.")
+
+  (cl-defmethod eglot-initialization-options ((server eglot-vls))
+    "Passes through required vetur initialization options to VLS."
+    '(:vetur
+      (:completion
+       (:autoImport t :useScaffoldSnippets t :tagCasing "kebab")
+       :grammar
+       (:customBlocks
+	(:docs "md" :i18n "json"))
+       :validation
+       (:template t :style t :script t)
+       :format
+       (:options
+	(:tabSize 2 :useTabs :json-false)
+	:defaultFormatter
+	(:html "prettyhtml" :css "prettier" :postcss "prettier" :scss "prettier" :less "prettier" :stylus "stylus-supremacy" :js "prettier" :ts "prettier")
+	:defaultFormatterOptions
+	(:js-beautify-html
+	 (:wrap_attributes "force-expand-multiline")
+	 :prettyhtml
+	 (:printWidth 100 :singleQuote :json-false :wrapAttributes :json-false :sortAttributes :json-false))
+	:styleInitialIndent :json-false :scriptInitialIndent :json-false)
+       :trace
+       (:server "verbose")
+       :dev)
+					;     (:vlsPath ""))
+      ))
+  (add-to-list 'eglot-server-programs
+               '(enh-ruby-mode . ("solargraph" "socket" "--port" :autoport)))
+  (add-to-list 'eglot-server-programs
+               ;; '(vue-mode . (eglot-vls . ("/home/kazuki/.yarn/bin/vls" "--stdio")))))
+               '(vue-mode . ("/home/kazuki/.yarn/bin/vls" "--stdio"))))
+
+(use-package company
+  :commands (company-mode))
+
 (use-package markdown-mode
   :commands (markdown-mode)
-  :config
-  (bind-key "M-n" nil markdown-mode-map)
-  (bind-key "M-p" nil markdown-mode-map)
-  (unless window-system
-    ;; `C-t' confilict to tmux's escape key, so avoid it
-    (bind-key "C-c t 0" 'markdown-remove-header markdown-mode-map)
-    (bind-key "C-c t 1" 'markdown-insert-header-atx-1 markdown-mode-map)
-    (bind-key "C-c t 2" 'markdown-insert-header-atx-2 markdown-mode-map)
-    (bind-key "C-c t 3" 'markdown-insert-header-atx-3 markdown-mode-map)
-    (bind-key "C-c t 4" 'markdown-insert-header-atx-4 markdown-mode-map)
-    (bind-key "C-c t 5" 'markdown-insert-header-atx-5 markdown-mode-map)
-    (bind-key "C-c t 6" 'markdown-insert-header-atx-6 markdown-mode-map)
-    (bind-key "C-c t h" 'markdown-insert-header-dwim markdown-mode-map)
-    (bind-key "C-c t s" 'markdown-insert-header-setext-2 markdown-mode-map)
-    (bind-key "C-c t t" 'markdown-insert-header-setext-1 markdown-mode-map))
+  :bind
+  (:map markdown-mode-map
+        ("M-n" . nil)
+        ("M-p" . nil)
+        ("C-c t 0" . markdown-remove-header)
+        ("C-c t 1" . markdown-insert-header-atx-1)
+        ("C-c t 2" . markdown-insert-header-atx-2)
+        ("C-c t 3" . markdown-insert-header-atx-3)
+        ("C-c t 4" . markdown-insert-header-atx-4)
+        ("C-c t 5" . markdown-insert-header-atx-5)
+        ("C-c t 6" . markdown-insert-header-atx-6)
+        ("C-c t h" . markdown-insert-header-dwim)
+        ("C-c t s" . markdown-insert-header-setext-2)
+        ("C-c t t" . markdown-insert-header-setext-1))
   :mode
   (("\\.markdown$" . markdown-mode)
    ("\\.md$" . markdown-mode)))
@@ -164,6 +205,8 @@
         enh-ruby-add-encoding-comment-on-save nil)
   (add-hook 'enh-ruby-mode-hook 'set-enh-ruby-mode-face t)
   (add-hook 'enh-ruby-mode-hook 'enable-ruby-flycheck-if-rubocop-yml-exists)
+  ;; (add-hook 'enh-ruby-mode-hook 'eglot-ensure)
+  ;; (add-hook 'enh-ruby-mode-hook 'company-mode)
   :mode
   (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|jb\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
 
@@ -258,6 +301,7 @@
 
 (use-package js
   :config
+  ;; (add-hook 'js-mode-hook 'eglot-ensure)
   (setq js-indent-level 2))
 
 (use-package vue-mode
