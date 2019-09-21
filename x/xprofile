@@ -1,3 +1,4 @@
+# -*- mode: sh -*-
 export DefaultIMModule=fcitx
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
@@ -9,7 +10,10 @@ xrandr --dpi 144
 xbindkeys -f ~/.xbindkeysrc
 
 $HOME/bin/wifi
+$HOME/bin/trackpoint-config
+$HOME/bin/disps
 fcitx-autostart
+compton -b
 light-locker &
 urxvtd -q -o -f
 firefox &

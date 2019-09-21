@@ -13,7 +13,7 @@ import XMonad.Util.Run (spawnPipe)
 import XMonad.Util.EZConfig (additionalKeysP)
 import XMonad.Util.NamedScratchpad
 
-myTerminal = "urxvtc -tr -sh 50"
+myTerminal = "urxvtc"
 myWorkspaces = map show [1..5]
 
 myBorderWidth = 3

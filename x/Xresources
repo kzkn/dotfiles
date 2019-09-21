@@ -10,7 +10,8 @@ URxvt.font: xft:Dejavu Sans Mono-11, \
 URxvt.letterSpace: -1
 URxvt.lineSpace: 0
 
-URxvt.depth: 24
+URxvt.depth: 32
+! URxvt.depth: 24
 URxvt.color0:  #282828
 URxvt.color1:  #cc241d
 URxvt.color2:  #98971a
@@ -28,6 +29,7 @@ URxvt.color13: #d3869b
 URxvt.color14: #83c07c
 URxvt.color15: #ebdbb2
 URxvt.foreground: #ebdbb2
+! URxvt.background: [70]#282828
 URxvt.background: #282828
 URxvt.colorIT: #8ec07c
 URxvt.colorBD: #d5c4a1
