@@ -79,8 +79,9 @@
     :config
     (add-hook 'emacs-lisp-mode-hook 'enable-auto-async-byte-compile-mode)
     (setq auto-async-byte-compile-suppress-warnings t))
-  :config
-  (bind-key "M-." 'find-function-at-point emacs-lisp-mode-map)
+  :bind
+  (:map emacs-lisp-mode-map
+        ("M-." . find-function-at-point))
   :interpreter
   (("emacs" . emacs-lisp-mode))
   :mode
@@ -203,8 +204,7 @@
   (add-hook 'haml-mode-hook 'enable-haml-flycheck-if-haml-lint-yml-exists))
 
 (use-package magit
-  :commands (magit-status)
-  :init (bind-key "C-x g" 'magit-status))
+  :commands (magit-status))
 
 (use-package highlight-indentation
   :config
@@ -270,6 +270,10 @@
 
 (use-package ssass-mode
   :commands (ssass-mode)
+  :bind
+  (:map ssass-mode-map
+        ("\177" . my/ssass-dedent)  ; [backspace]
+        ("C-i" . my/ssass-indent-cyclic))
   :config
   (defun ssass-indent ()
     "Indent the current line."
@@ -300,11 +304,7 @@
            (max-indent (+ ssass-tab-width (ssass--last-anchor-line-indent-level))))
       (indent-line-to (if (< max-indent next)
                           0
-                        next))))
-
-  ;; [backspace] としたいところだけど効かなかった
-  (bind-key "\177" 'my/ssass-dedent ssass-mode-map)
-  (bind-key "C-i" 'my/ssass-indent-cyclic ssass-mode-map))
+                        next)))))
 
 (use-package sqlformat
   :config
@@ -312,16 +312,19 @@
 
 (use-package hydra
   :commands
-  (hydra-error/body hydra-window/body)
+  (hydra-error/body hydra-window/body hydra-main/body)
   :bind
-  (("M-o" . hydra-window/body))
+  (("M-o" . hydra-window/body)
+   ("M-g" . hydra-error/body)
+   ("C-z" . hydra-main/body))
   :config
-  (defhydra hydra-error (global-map "M-g")
+  (defhydra hydra-error ()
     "goto-error"
     ("h" first-error "first")
     ("j" next-error "next")
     ("k" previous-error "prev")
     ("v" recenter-top-bottom "recenter")
+    ("g" goto-line "line" :exit t)
     ("q" nil "quit"))
 
   (defhydra hydra-window ()
@@ -330,21 +333,45 @@
     ("j" windmove-down nil)
     ("k" windmove-up nil)
     ("l" windmove-right nil)
-    ("v" (lambda ()
+    ("|" (lambda ()
            (interactive)
            (split-window-right)
            (windmove-right))
      "vert")
-    ("x" (lambda ()
+    ("-" (lambda ()
            (interactive)
            (split-window-below)
            (windmove-down))
      "horz")
-    ("o" delete-other-windows "one" :exit t)
+    ("1" delete-other-windows "one")
+    ("0" delete-window "del")
     ("b" ido-switch-buffer "buf")
-    ("g" ghq-cd "ghq")
+    ("p" ghq-cd "ghq")
     ("f" find-file-in-git-ls-files "git ls")
-    ("q" nil "cancel")))
+    ("q" nil "quit"))
+
+  (defhydra hydra-main (:hint nil :exit t)
+    "
+^Main^                      ^Git^
+^^^^^^^^-------------------------------------------------------
+_r_: replace-string         _g_: magit-status
+_R_: replace-regexp         _b_: magit-blame
+_X_: query-replace-regexp   _d_: git-grep
+_c_: grep                   _p_: ghq-cd
+^  ^                        _f_: find-file-in-git-ls-files
+
+_q_: quit
+"
+    ("r" replace-string)
+    ("R" replace-regexp)
+    ("X" query-replace-regexp)
+    ("c" grep)
+    ("g" magit-status)
+    ("b" magit-blame)
+    ("d" git-grep)
+    ("p" ghq-cd)
+    ("f" find-file-in-git-ls-files)
+    ("q" nil)))
 
 
 ;;;; Load local files
@@ -362,7 +389,6 @@
 
 ;;;; Global Bindings
 (bind-key "M-k" 'kill-this-buffer)
-(bind-key "M-g g" 'goto-line)
 (bind-key "M-r" 'git-grep-symbol-at-point)
 
 (bind-key "C-c a" 'org-agenda)

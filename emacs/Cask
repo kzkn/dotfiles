@@ -30,3 +30,4 @@
 (depends-on "ssass-mode")
 (depends-on "add-node-modules-path")
 (depends-on "hydra")
+(depends-on "sqlformat")
