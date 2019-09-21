@@ -5,13 +5,12 @@ bind % split-window -hc "#{pane_current_path}"
 bind '"' split-window -vc "#{pane_current_path}"
 
 set-option -g default-terminal screen-256color
+set -g terminal-overrides 'xterm:colors-256'
 
 # -------
 # Status
 # -------
-set-option -g status-bg black
-set-option -g status-fg default
-set-option -g status-attr bold
+set-option -g status-style bg=black,fg=default,bold
 set-option -g status-justify centre
 set-option -g status-left-length 0
 set-option -g status-right-length 0
@@ -20,9 +19,7 @@ set-option -g status-right-length 0
 # Window
 # -------
 set-window-option -g automatic-rename off
-set-window-option -g window-status-bg white
-set-window-option -g window-status-fg black
+set-window-option -g window-status-style bg=white,fg=black
 set-window-option -g window-status-format " #F#I:#W#F "
-set-window-option -g window-status-current-bg magenta
-set-window-option -g window-status-current-fg white
+set-window-option -g window-status-current-style bg=magenta,fg=white
 set-window-option -g window-status-current-format " #F#I:#W#F "
