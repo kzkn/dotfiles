@@ -13,9 +13,9 @@ $HOME/bin/wifi
 $HOME/bin/trackpoint-config
 $HOME/bin/disps
 fcitx-autostart
-compton -b
+picom --no-dock-window --no-dnd-window --daemon
 light-locker &
-urxvtd -q -o -f
+urxvtd -q -o -f # FIXME: load .zshrc
 firefox &
 synclient TouchpadOff=1
 feh --bg-scale ~/Images/wallpaper02.jpg
