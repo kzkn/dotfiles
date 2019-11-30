@@ -13,6 +13,7 @@ PATH=$HOME/go/bin:$PATH
 PATH=$HOME/npm/bin:$PATH
 PATH=$HOME/.yarn/bin:$PATH
 PATH=$HOME/.nodenv/bin:$PATH
+PATH=$HOME/opt/android-studio/bin:$PATH
 export PATH
 
 eval "$(rbenv init -)"
