@@ -438,6 +438,7 @@ _q_: quit
 (bind-key "C-c a" 'org-agenda)
 (bind-key "C-c c" 'org-capture)
 (bind-key "C-c n" 'cleanup-buffer)
+(bind-key "C-c g" 'revert-buffer)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
