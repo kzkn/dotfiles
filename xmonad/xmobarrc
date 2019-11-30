@@ -30,10 +30,11 @@ Config { font = "xft:Noto Sans CJK JP-10"
                                     "-L", "-15", "-H", "-5",
                                     "-l", "red", "-m", "blue", "-h", "green"]
                                    10
+                    , Run Com "/home/kazuki/bin/weather.sh" [] "weather" 600
                     , Run StdinReader
                     ]
        , sepChar = "%"
        , alignSep = "}{"
        , template = "%StdinReader%}{%cpu% | %memory% | %wlp2s0wi%\
-                    \ | %battery% | <icon=volume.xbm/> %myvolume% | <fc=#83c07c>%date%</fc> "
+                    \ | %battery% | <icon=volume.xbm/> %myvolume% | %weather% | <fc=#83c07c>%date%</fc> "
        }
