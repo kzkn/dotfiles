@@ -3,3 +3,4 @@
 dir=`pwd`
 ln -f -s "$dir/config" "$HOME/.gitconfig"
 ln -f -s "$dir/ignore" "$HOME/.gitignore"
+ln -f -s "$dir/message" "$HOME/.gitmessage"
