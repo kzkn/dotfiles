@@ -23,6 +23,9 @@
 (use-package s
   :ensure t)
 
+(use-package auto-package-update
+  :ensure t)
+
 (use-package ido
   :ensure t
   :config
