@@ -3,7 +3,8 @@ export DefaultIMModule=fcitx
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
-export GDK_DPI_SCALE=1.1
+export GDK_DPI_SCALE=1.2
+export XDG_CONFIG_HOME="$HOME/.config"
 
 xrdb -merge ~/.Xresources
 xrandr --dpi 144
@@ -13,7 +14,8 @@ $HOME/bin/wifi
 $HOME/bin/trackpoint-config
 $HOME/bin/disps
 fcitx-autostart
-picom --no-dock-window --no-dnd-window --daemon
+# NOTE:不安定なので止めておく
+# picom --no-dock-shadow --no-dnd-shadow --daemon
 light-locker &
 urxvtd -q -o -f # FIXME: load .zshrc
 firefox &
@@ -21,3 +23,5 @@ synclient TouchpadOff=1
 feh --bg-scale ~/Images/wallpaper02.jpg
 
 exec xmonad
+#exec bspwm
+#exec startxfce4

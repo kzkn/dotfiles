@@ -83,7 +83,8 @@
 ;; current line
 (defvar hl-line-face) ;; Quiet the byte-compiler
 (defface hlline-face
-  '((t (:background "dark slate gray")))
+  ;; '((t (:background "dark slate gray")))
+  '((t (:background "color-16")))
   "*Face to use for `hl-line-face'." :group 'hl-line)
 (setq hl-line-face 'hlline-face)
 (global-hl-line-mode)

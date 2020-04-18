@@ -140,3 +140,21 @@
   (untabify-buffer)
   (delete-trailing-whitespace)
   (indent-buffer))
+
+(defun split-window-vertically-n (num-wins)
+  (interactive "p")
+  (if (= num-wins 2)
+      (split-window-vertically)
+    (progn
+      (split-window-vertically
+       (- (window-height) (/ (window-height) num-wins)))
+      (split-window-vertically-n (- num-wins 1)))))
+
+(defun split-window-horizontally-n (num-wins)
+  (interactive "p")
+  (if (= num-wins 2)
+      (split-window-horizontally)
+    (progn
+      (split-window-horizontally
+       (- (window-width) (/ (window-width) num-wins)))
+      (split-window-horizontally-n (- num-wins 1)))))

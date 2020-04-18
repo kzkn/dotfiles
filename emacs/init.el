@@ -57,10 +57,15 @@
                '(enh-ruby-mode . ("solargraph" "socket" "--port" :autoport)))
   (add-to-list 'eglot-server-programs
                ;; '(vue-mode . (eglot-vls . ("/home/kazuki/.yarn/bin/vls" "--stdio")))))
-               '(vue-mode . ("/home/kazuki/.yarn/bin/vls" "--stdio"))))
+               '(vue-mode . ("/home/kazuki/.yarn/bin/vls" "--stdio")))
+  (add-to-list 'eglot-server-programs
+               '(web-mode . ("/home/kazuki/.yarn/bin/javascript-typescript-stdio"))))
 
 (use-package company
-  :commands (company-mode))
+  :commands (company-mode)
+  :config
+  (add-hook 'after-init-hook 'global-company-mode)
+  (setq company-idle-delay 0.1))
 
 (use-package markdown-mode
   :commands (markdown-mode)
@@ -151,8 +156,9 @@
   :config
   (setq uniquify-buffer-name-style 'post-forward-angle-brackets))
 
-(use-package inkpot-theme
-  :if window-system)
+(use-package doom-themes
+  :config
+  (load-theme 'doom-vibrant t))
 
 ;; (use-package esup)
 
@@ -170,7 +176,8 @@
   (("\\.html?$" . web-mode)
    ("\\.jsx?$" . web-mode)
    ("\\.json$" . web-mode)
-   ("\\.erb$" . web-mode)))
+   ("\\.erb$" . web-mode)
+   ("\\.tsx?$" . web-mode)))
 
 (use-package ws-butler
   :config
@@ -301,7 +308,6 @@
 
 (use-package js
   :config
-  ;; (add-hook 'js-mode-hook 'eglot-ensure)
   (setq js-indent-level 2))
 
 (use-package vue-mode
@@ -309,6 +315,9 @@
   :config
   (add-hook 'vue-mode-hook 'add-node-modules-path)
   (add-hook 'vue-mode-hook 'flycheck-mode)
+  ;; https://github.com/AdamNiederer/vue-mode/issues/74#issuecomment-528560608
+  (setq mmm-js-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
+  (setq mmm-typescript-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
   (custom-set-variables
    '(vue-html-extra-indent 2)))
 
@@ -349,6 +358,21 @@
       (indent-line-to (if (< max-indent next)
                           0
                         next)))))
+
+(use-package pug-mode
+  :commands (pug-mode)
+  :config
+  (setq pug-tab-width 2))
+
+(use-package typescript-mode
+  :commands (typescript-mode typescript-tsx-mode)
+  :config
+  (setq typescript-indent-level 2))
+
+(use-package css-mode
+  :commands (css-mode)
+  :config
+  (setq css-indent-offset 2))
 
 (use-package sqlformat
   :config
@@ -434,10 +458,9 @@ _q_: quit
 ;;;; Global Bindings
 (bind-key "M-k" 'kill-this-buffer)
 (bind-key "M-r" 'git-grep-symbol-at-point)
+(bind-key "M-]" 'bs-cycle-next)
+(bind-key "M-[" 'bs-cycle-previous)
 
-(bind-key "C-c a" 'org-agenda)
-(bind-key "C-c c" 'org-capture)
-(bind-key "C-c n" 'cleanup-buffer)
 (bind-key "C-c g" 'revert-buffer)
 
 (custom-set-variables

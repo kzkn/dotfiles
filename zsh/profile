@@ -4,6 +4,12 @@
 export EDITOR=vi
 export ANSIBLE_NOCOWS=1
 
+JAVA_HOME=$HOME/opt/android-studio/jre
+export JAVA_HOME
+
+ANDROID_HOME=$HOME/Android/Sdk
+export ANDROID_HOME
+
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
 PATH=/usr/lib/lightdm/lightdm:$PATH
 PATH=$HOME/.cask/bin:$PATH
@@ -14,6 +20,11 @@ PATH=$HOME/npm/bin:$PATH
 PATH=$HOME/.yarn/bin:$PATH
 PATH=$HOME/.nodenv/bin:$PATH
 PATH=$HOME/opt/android-studio/bin:$PATH
+PATH=$ANDROID_HOME/emulator:$PATH
+PATH=$ANDROID_HOME/tools:$PATH
+PATH=$ANDROID_HOME/tools/bin:$PATH
+PATH=$ANDROID_HOME/platform-tools:$PATH
+
 export PATH
 
 eval "$(rbenv init -)"

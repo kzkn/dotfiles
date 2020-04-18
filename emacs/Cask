@@ -32,3 +32,6 @@
 (depends-on "hydra")
 (depends-on "eglot")
 (depends-on "sqlformat")
+(depends-on "company")
+(depends-on "pug-mode")
+(depends-on "typescript-mode")
