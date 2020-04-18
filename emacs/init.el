@@ -20,6 +20,9 @@
 
 (server-start)
 
+(use-package s
+  :ensure t)
+
 (use-package ido
   :ensure t
   :config
@@ -498,7 +501,6 @@ _q_: quit
 (load-x "defuns")
 (load-x "site" t)
 (load-x "flycheck-checker")
-(load-x "rspec-result-mode")
 
 ;;;; Global Bindings
 (bind-key "M-k" 'kill-this-buffer)
