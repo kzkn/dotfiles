@@ -1,13 +1,27 @@
-(require 'cask "~/.cask/cask.el")
-(cask-initialize)
+(require 'package)
+
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives
+             '("gnu" . "http://elpa.gnu.org/packages/") t)
+
+(package-initialize)
+
+(unless (file-exists-p package-user-dir)
+  (package-refresh-contents))
+
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
+(require 'cl-lib)
+(require 'use-package)
 
 (server-start)
 
-;;;; Packages
-(require 'use-package)
-(require 'cl-lib)
-
 (use-package ido
+  :ensure t
   :config
   (ido-mode 1)
   (setq ido-everywhere t)
@@ -18,10 +32,12 @@
   (setq ido-case-fold t))
 
 (use-package ido-grid-mode
+  :ensure t
   :config
   (ido-grid-mode 1))
 
 (use-package eglot
+  :ensure t
   :commands (eglot eglot-ensure)
   :config
   (defclass eglot-vls (eglot-lsp-server) ()
@@ -62,12 +78,14 @@
                '(web-mode . ("/home/kazuki/.yarn/bin/javascript-typescript-stdio"))))
 
 (use-package company
+  :ensure t
   :commands (company-mode)
   :config
   (add-hook 'after-init-hook 'global-company-mode)
   (setq company-idle-delay 0.1))
 
 (use-package markdown-mode
+  :ensure t
   :commands (markdown-mode)
   :bind
   (:map markdown-mode-map
@@ -116,12 +134,13 @@
   :config
   (add-hook 'find-file-hook 'highlight-parentheses-mode))
 
-(use-package elisp-mode
+(use-package emacs-lisp-mode
   :init
   (use-package eldoc
     :config
     (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode))
   (use-package auto-async-byte-compile
+    :ensure t
     :config
     (add-hook 'emacs-lisp-mode-hook 'enable-auto-async-byte-compile-mode)
     (setq auto-async-byte-compile-suppress-warnings t))
@@ -134,6 +153,7 @@
   (("Cask" . emacs-lisp-mode)))
 
 (use-package slime
+  :ensure t
   :config
   (setq inferior-lisp-program "sbcl"
         slime-contribs '(slime-fancy))
@@ -145,6 +165,7 @@
   (setq sh-basic-offset 2))
 
 (use-package popwin
+  :ensure t
   :config
   (popwin-mode 1)
   (push '(rspec-compilation-mode :noselect t :stick t) popwin:special-display-config)
@@ -157,12 +178,14 @@
   (setq uniquify-buffer-name-style 'post-forward-angle-brackets))
 
 (use-package doom-themes
+  :ensure t
   :config
   (load-theme 'doom-vibrant t))
 
 ;; (use-package esup)
 
 (use-package web-mode
+  :ensure t
   :commands (web-mode)
   :config
   (setq web-mode-markup-indent-offset 2
@@ -180,6 +203,7 @@
    ("\\.tsx?$" . web-mode)))
 
 (use-package ws-butler
+  :ensure t
   :config
   (mapc (lambda (hook)
           (add-hook hook 'ws-butler-mode))
@@ -192,11 +216,13 @@
           emacs-lisp-mode-hook)))
 
 (use-package flycheck
+  :ensure t
   :config
   (flycheck-add-mode 'javascript-eslint 'vue-html-mode)
   (flycheck-add-mode 'javascript-eslint 'ssass-mode))
 
 (use-package yaml-mode
+  :ensure t
   :commands (yaml-mode))
 
 (defun set-enh-ruby-mode-face ()
@@ -206,6 +232,7 @@
   (enable-flycheck-if-parent-file-exists ".rubocop.yml" 'ruby-rubocop))
 
 (use-package enh-ruby-mode
+  :ensure t
   :commands (enh-ruby-mode)
   :config
   (setq enh-ruby-deep-indent-paren nil
@@ -218,6 +245,7 @@
   (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|jb\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
 
 (use-package ruby-electric
+  :ensure t
   :commands (ruby-electric-mode)
   :init (add-hook 'enh-ruby-mode-hook 'ruby-electric-mode))
 
@@ -227,6 +255,7 @@
     (shell-command (format "notify-send --urgency %s 'RSpec completed' '%s'" urgency message))))
 
 (use-package rspec-mode
+  :ensure t
   :commands (rspec-mode)
   :init
   (add-hook 'enh-ruby-mode-hook 'rspec-mode)
@@ -240,6 +269,7 @@
     (rspec-install-snippets)))
 
 (use-package inf-ruby
+  :ensure t
   :commands (inf-ruby-minor-mode)
   :init
   (add-hook 'enh-ruby-mode-hook 'inf-ruby-minor-mode)
@@ -249,14 +279,17 @@
   (enable-flycheck-if-parent-file-exists ".haml-lint.yml" 'haml-lint))
 
 (use-package haml-mode
+  :ensure t
   :commands (haml-mode)
   :config
   (add-hook 'haml-mode-hook 'enable-haml-flycheck-if-haml-lint-yml-exists))
 
 (use-package magit
+  :ensure t
   :commands (magit-status))
 
 (use-package highlight-indentation
+  :ensure t
   :config
   (set-face-background 'highlight-indentation-face "gray20")
   (set-face-background 'highlight-indentation-current-column-face "gray35")
@@ -285,32 +318,39 @@
       (add-hook hook 'highlight-indentation-current-column-mode))))
 
 (use-package wgrep
+  :ensure t
   :config
   (setq wgrep-auto-save-buffer t))
 
 (use-package coffee-mode
+  :ensure t
   :commands (coffee-mode)
   :config
   (custom-set-variables
    '(coffee-tab-width 2)))
 
 (use-package sass-mode
+  :ensure t
   :commands (sass-mode))
 
 (use-package haskell-mode
+  :ensure t
   :commands (haskell-mode))
 
 (use-package yasnippet
+  :ensure t
   :init
   (add-hook 'prog-mode-hook 'yas-minor-mode))
 
-(use-package add-node-modules-path)
+(use-package add-node-modules-path
+  :ensure t)
 
 (use-package js
   :config
   (setq js-indent-level 2))
 
 (use-package vue-mode
+  :ensure t
   :commands (vue-mode)
   :config
   (add-hook 'vue-mode-hook 'add-node-modules-path)
@@ -322,6 +362,7 @@
    '(vue-html-extra-indent 2)))
 
 (use-package ssass-mode
+  :ensure t
   :commands (ssass-mode)
   :bind
   (:map ssass-mode-map
@@ -360,11 +401,13 @@
                         next)))))
 
 (use-package pug-mode
+  :ensure t
   :commands (pug-mode)
   :config
   (setq pug-tab-width 2))
 
 (use-package typescript-mode
+  :ensure t
   :commands (typescript-mode typescript-tsx-mode)
   :config
   (setq typescript-indent-level 2))
@@ -375,10 +418,12 @@
   (setq css-indent-offset 2))
 
 (use-package sqlformat
+  :ensure t
   :config
   (add-hook 'sql-mode-hook 'sqlformat-on-save-mode))
 
 (use-package hydra
+  :ensure t
   :commands
   (hydra-error/body hydra-window/body hydra-main/body)
   :bind
