@@ -141,22 +141,20 @@
   (add-hook 'find-file-hook 'highlight-parentheses-mode))
 
 (use-package emacs-lisp-mode
-  :init
-  (use-package eldoc
-    :config
-    (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode))
-  (use-package auto-async-byte-compile
-    :ensure t
-    :config
-    (add-hook 'emacs-lisp-mode-hook 'enable-auto-async-byte-compile-mode)
-    (setq auto-async-byte-compile-suppress-warnings t))
+  :commands (emacs-lisp-mode)
   :bind
   (:map emacs-lisp-mode-map
-        ("M-." . find-function-at-point))
-  :interpreter
-  (("emacs" . emacs-lisp-mode))
-  :mode
-  (("Cask" . emacs-lisp-mode)))
+        ("M-." . find-function-at-point)))
+
+(use-package eldoc
+  :config
+  (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode))
+
+(use-package auto-async-byte-compile
+  :ensure t
+  :config
+  (add-hook 'emacs-lisp-mode-hook 'enable-auto-async-byte-compile-mode)
+  (setq auto-async-byte-compile-suppress-warnings t))
 
 (use-package slime
   :ensure t
