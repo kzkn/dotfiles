@@ -166,11 +166,11 @@
   :config
   (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode))
 
-(use-package auto-async-byte-compile
-  :ensure t
-  :config
-  (add-hook 'emacs-lisp-mode-hook 'enable-auto-async-byte-compile-mode)
-  (setq auto-async-byte-compile-suppress-warnings t))
+;; (use-package auto-async-byte-compile
+;;   :ensure t
+;;   :config
+;;   (add-hook 'emacs-lisp-mode-hook 'enable-auto-async-byte-compile-mode)
+;;   (setq auto-async-byte-compile-suppress-warnings t))
 
 (use-package slime
   :ensure t
