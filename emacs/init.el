@@ -536,8 +536,8 @@ _q_: quit
 ;;;; Global Bindings
 (bind-key "M-k" 'kill-this-buffer)
 (bind-key "M-r" 'git-grep-symbol-at-point)
-(bind-key "M-]" 'bs-cycle-next)
-(bind-key "M-[" 'bs-cycle-previous)
+;; (bind-key "M-]" 'bs-cycle-next)
+;; (bind-key "M-[" 'bs-cycle-previous)
 
 (bind-key "C-c g" 'revert-buffer)
 
