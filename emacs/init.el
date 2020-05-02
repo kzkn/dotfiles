@@ -58,47 +58,6 @@
   :ensure t
   :after (lsp-mode))
 
-(use-package eglot
-  :ensure t
-  :commands (eglot eglot-ensure)
-  :config
-  (defclass eglot-vls (eglot-lsp-server) ()
-    :documentation "Vue Language Server.")
-
-  (cl-defmethod eglot-initialization-options ((server eglot-vls))
-    "Passes through required vetur initialization options to VLS."
-    '(:vetur
-      (:completion
-       (:autoImport t :useScaffoldSnippets t :tagCasing "kebab")
-       :grammar
-       (:customBlocks
-	(:docs "md" :i18n "json"))
-       :validation
-       (:template t :style t :script t)
-       :format
-       (:options
-	(:tabSize 2 :useTabs :json-false)
-	:defaultFormatter
-	(:html "prettyhtml" :css "prettier" :postcss "prettier" :scss "prettier" :less "prettier" :stylus "stylus-supremacy" :js "prettier" :ts "prettier")
-	:defaultFormatterOptions
-	(:js-beautify-html
-	 (:wrap_attributes "force-expand-multiline")
-	 :prettyhtml
-	 (:printWidth 100 :singleQuote :json-false :wrapAttributes :json-false :sortAttributes :json-false))
-	:styleInitialIndent :json-false :scriptInitialIndent :json-false)
-       :trace
-       (:server "verbose")
-       :dev)
-					;     (:vlsPath ""))
-      ))
-  (add-to-list 'eglot-server-programs
-               '(enh-ruby-mode . ("solargraph" "socket" "--port" :autoport)))
-  (add-to-list 'eglot-server-programs
-               ;; '(vue-mode . (eglot-vls . ("/home/kazuki/.yarn/bin/vls" "--stdio")))))
-               '(vue-mode . ("/home/kazuki/.yarn/bin/vls" "--stdio")))
-  (add-to-list 'eglot-server-programs
-               '(web-mode . ("/home/kazuki/.yarn/bin/javascript-typescript-stdio"))))
-
 (use-package company
   :ensure t
   :commands (company-mode)
@@ -269,8 +228,6 @@
   (add-hook 'enh-ruby-mode-hook 'set-enh-ruby-mode-face t)
   (add-hook 'enh-ruby-mode-hook 'enable-ruby-flycheck-if-rubocop-yml-exists)
   (add-hook 'enh-ruby-mode-hook 'rufo-on-save-mode)
-  ;; (add-hook 'enh-ruby-mode-hook 'eglot-ensure)
-  ;; (add-hook 'enh-ruby-mode-hook 'company-mode)
   :mode
   (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|jb\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
 
