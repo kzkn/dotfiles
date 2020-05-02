@@ -227,7 +227,6 @@
         enh-ruby-add-encoding-comment-on-save nil)
   (add-hook 'enh-ruby-mode-hook 'set-enh-ruby-mode-face t)
   (add-hook 'enh-ruby-mode-hook 'enable-ruby-flycheck-if-rubocop-yml-exists)
-  (add-hook 'enh-ruby-mode-hook 'rufo-on-save-mode)
   :mode
   (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|jb\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
 
