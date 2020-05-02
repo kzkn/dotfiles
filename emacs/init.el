@@ -204,6 +204,13 @@
 
 ;; (use-package esup)
 
+(defun eslint-fix-enable-p (file-name)
+  (member (file-name-extension file-name) (list "js")))
+
+(defun eslint-fix-web-mode ()
+  (when (and (buffer-file-name) (eslint-fix-enable-p (buffer-file-name)))
+    (eslint-fix-on-save-mode)))
+
 (use-package web-mode
   :ensure t
   :commands (web-mode)
@@ -215,6 +222,8 @@
         web-mode-script-padding 2
         web-mode-style-padding 2
         web-mode-content-types-alist '(("jsx"  . ".*\\.js[x]?\\'")))
+  (add-hook 'web-mode-hook 'eslint-fix-web-mode)
+  (add-hook 'web-mode-hook 'add-node-modules-path)
   :mode
   (("\\.html?$" . web-mode)
    ("\\.jsx?$" . web-mode)
@@ -259,6 +268,7 @@
         enh-ruby-add-encoding-comment-on-save nil)
   (add-hook 'enh-ruby-mode-hook 'set-enh-ruby-mode-face t)
   (add-hook 'enh-ruby-mode-hook 'enable-ruby-flycheck-if-rubocop-yml-exists)
+  (add-hook 'enh-ruby-mode-hook 'rufo-on-save-mode)
   ;; (add-hook 'enh-ruby-mode-hook 'eglot-ensure)
   ;; (add-hook 'enh-ruby-mode-hook 'company-mode)
   :mode
@@ -284,7 +294,6 @@
   (setq rspec-use-spring-when-possible nil
         rspec-use-bundler-when-possible t)
   (add-hook 'rspec-after-verification-hook 'notify-rspec-finish)
-  (add-hook 'rspec-after-verification-hook 'rspecr-save-rspec-result)
   (with-eval-after-load 'rspec-mode
     (rspec-install-snippets)))
 
@@ -375,6 +384,7 @@
   :config
   (add-hook 'vue-mode-hook 'add-node-modules-path)
   (add-hook 'vue-mode-hook 'flycheck-mode)
+  (add-hook 'vue-mode-hook 'eslint-fix-on-save-mode)
   ;; https://github.com/AdamNiederer/vue-mode/issues/74#issuecomment-528560608
   (setq mmm-js-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
   (setq mmm-typescript-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
@@ -441,6 +451,9 @@
   :ensure t
   :config
   (add-hook 'sql-mode-hook 'sqlformat-on-save-mode))
+
+(use-package reformatter
+  :ensure t)
 
 (use-package hydra
   :ensure t
@@ -518,6 +531,7 @@ _q_: quit
 (load-x "defuns")
 (load-x "site" t)
 (load-x "flycheck-checker")
+(load-x "format")
 
 ;;;; Global Bindings
 (bind-key "M-k" 'kill-this-buffer)
