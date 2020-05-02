@@ -42,6 +42,22 @@
   :config
   (ido-grid-mode 1))
 
+(use-package lsp-mode
+  :ensure t
+  :commands (lsp))
+
+(use-package lsp-ui
+  :ensure t
+  :after (lsp-mode))
+
+(use-package company-lsp
+  :ensure t
+  :after (lsp-mode))
+
+(use-package dap-mode
+  :ensure t
+  :after (lsp-mode))
+
 (use-package eglot
   :ensure t
   :commands (eglot eglot-ensure)
