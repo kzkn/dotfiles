@@ -3,10 +3,10 @@
 
 (reformatter-define rufo
   :program "rufo"
-  :lighter "Rufo"
+  :lighter " Rufo"
   :exit-code-success-p rufo-success-p)
 
 (reformatter-define eslint-fix
   :program "eslint_d"
-  :lighter "ESLint"
+  :lighter " ESLint"
   :args '("--stdin" "--fix-to-stdout"))
