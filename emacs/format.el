@@ -9,4 +9,4 @@
 (reformatter-define eslint-fix
   :program "eslint_d"
   :lighter " ESLint"
-  :args '("--stdin" "--fix-to-stdout"))
+  :args (list "--stdin" "--fix-to-stdout" "--stdin-filename" (buffer-file-name)))

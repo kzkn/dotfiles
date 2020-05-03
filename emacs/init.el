@@ -164,7 +164,7 @@
 ;; (use-package esup)
 
 (defun eslint-fix-enable-p (file-name)
-  (member (file-name-extension file-name) (list "js")))
+  (member (file-name-extension file-name) '("js" "ts" "jsx" "tsx")))
 
 (defun eslint-fix-web-mode ()
   (when (and (buffer-file-name) (eslint-fix-enable-p (buffer-file-name)))
