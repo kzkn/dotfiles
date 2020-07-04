@@ -163,11 +163,14 @@
 
 ;; (use-package esup)
 
-(defun eslint-fix-enable-p (file-name)
+(defun eslint-enable-p (file-name)
   (member (file-name-extension file-name) '("js" "ts" "jsx" "tsx")))
 
+(defun eslint-enable-current-buffer-p ()
+  (and (buffer-file-name) (eslint-enable-p (buffer-file-name))))
+
 (defun eslint-fix-web-mode ()
-  (when (and (buffer-file-name) (eslint-fix-enable-p (buffer-file-name)))
+  (when (eslint-enable-current-buffer-p)
     (eslint-fix-on-save-mode)))
 
 (use-package web-mode
@@ -183,6 +186,7 @@
         web-mode-content-types-alist '(("jsx"  . ".*\\.js[x]?\\'")))
   (add-hook 'web-mode-hook 'eslint-fix-web-mode)
   (add-hook 'web-mode-hook 'add-node-modules-path)
+  (add-hook 'web-mode-hook 'flycheck-mode)
   :mode
   (("\\.html?$" . web-mode)
    ("\\.jsx?$" . web-mode)
@@ -225,6 +229,8 @@
 (defun my/flycheck-command-wrapper-function (command)
   (cond ((eq flycheck-checker 'ruby-rubocop)
          (my/wrap-ruby-rubocop command))
+        ((eq major-mode 'web-mode)
+         (if (eslint-enable-current-buffer-p) command '("true")))
         (t
          command)))
 
@@ -233,6 +239,7 @@
   :config
   (flycheck-add-mode 'javascript-eslint 'vue-html-mode)
   (flycheck-add-mode 'javascript-eslint 'ssass-mode)
+  (flycheck-add-mode 'javascript-eslint 'web-mode)
   (setq flycheck-command-wrapper-function #'my/flycheck-command-wrapper-function))
 
 (use-package yaml-mode
