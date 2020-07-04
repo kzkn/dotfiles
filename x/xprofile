@@ -4,6 +4,7 @@ export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
 export GDK_DPI_SCALE=1.2
+export QT_SCALE_FACTOR=0.5 # for zoom
 export XDG_CONFIG_HOME="$HOME/.config"
 
 xrdb -merge ~/.Xresources
