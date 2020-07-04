@@ -86,13 +86,6 @@
   (("\\.markdown$" . markdown-mode)
    ("\\.md$" . markdown-mode)))
 
-;; TODO: remove
-(defun compile-immediate ()
-  (interactive)
-  (custom-set-variables
-   '(compilation-read-command nil))
-  (call-interactively 'compile))
-
 (defun my-c-mode-common-hook ()
   (c-set-offset 'inextern-lang 0)
   (c-set-offset 'arglist-intro '++)
