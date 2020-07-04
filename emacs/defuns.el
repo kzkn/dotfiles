@@ -1,4 +1,5 @@
 (require 'cl-lib)
+(require 'ffap)
 
 (defun resize-window ()
   "Resize the current window."
@@ -158,3 +159,10 @@
       (split-window-horizontally
        (- (window-width) (/ (window-width) num-wins)))
       (split-window-horizontally-n (- num-wins 1)))))
+
+(defun xdg-open-at-point ()
+  (interactive)
+  (let ((filename (ffap-file-at-point))
+        (xdg-open (executable-find "xdg-open")))
+    (if (and filename xdg-open)
+        (start-process "xdg-open-at-point" nil xdg-open filename))))

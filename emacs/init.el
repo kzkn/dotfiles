@@ -203,11 +203,37 @@
           lisp-mode-hook
           emacs-lisp-mode-hook)))
 
+(defun current-project-gemfile-lock-path ()
+  (let* ((curdir (file-name-directory (buffer-file-name)))
+         (gemfile-lock-dir (my/find-to-root curdir (list "Gemfile.lock"))))
+    (and gemfile-lock-dir
+         (concat (file-name-as-directory gemfile-lock-dir) "Gemfile.lock"))))
+
+(defun rubocop-in-gemfile-lock-p ()
+  (let* ((gemfile-lock-path (current-project-gemfile-lock-path)))
+    (and gemfile-lock-path
+         (with-temp-buffer
+           (insert-file-contents gemfile-lock-path)
+           (goto-char (point-min))
+           (search-forward "rubocop" nil t)))))
+
+(defun my/wrap-ruby-rubocop (command)
+  (if (rubocop-in-gemfile-lock-p)
+      (append '("bundle" "exec") command)
+    command))
+
+(defun my/flycheck-command-wrapper-function (command)
+  (cond ((eq flycheck-checker 'ruby-rubocop)
+         (my/wrap-ruby-rubocop command))
+        (t
+         command)))
+
 (use-package flycheck
   :ensure t
   :config
   (flycheck-add-mode 'javascript-eslint 'vue-html-mode)
-  (flycheck-add-mode 'javascript-eslint 'ssass-mode))
+  (flycheck-add-mode 'javascript-eslint 'ssass-mode)
+  (setq flycheck-command-wrapper-function #'my/flycheck-command-wrapper-function))
 
 (use-package yaml-mode
   :ensure t
@@ -235,10 +261,19 @@
   :commands (ruby-electric-mode)
   :init (add-hook 'enh-ruby-mode-hook 'ruby-electric-mode))
 
+(defun rspec-last-compilation-failed-p ()
+  (save-excursion
+    (goto-char (point-min))
+    (if (re-search-forward "^Failed examples:$" nil t) t nil)))
+
 (defun notify-rspec-finish ()
-  (let ((urgency (if rspec-last-failed-specs "critical" "normal"))
-        (message (if rspec-last-failed-specs "Failed" "Succeeded")))
+  (let* ((failed (rspec-last-compilation-failed-p))
+         (urgency (if failed "critical" "normal"))
+         (message (if failed "Failed" "Succeeded")))
     (shell-command (format "notify-send --urgency %s 'RSpec completed' '%s'" urgency message))))
+
+(defun rspec-runner--lang-ja-jp (orig-fn &rest args)
+  (concat "LANG=ja_JP.utf8 " (apply orig-fn args)))
 
 (use-package rspec-mode
   :ensure t
@@ -250,6 +285,7 @@
   (setq rspec-use-spring-when-possible nil
         rspec-use-bundler-when-possible t)
   (add-hook 'rspec-after-verification-hook 'notify-rspec-finish)
+  (advice-add 'rspec-runner :around #'rspec-runner--lang-ja-jp)
   (with-eval-after-load 'rspec-mode
     (rspec-install-snippets)))
 
@@ -492,6 +528,7 @@ _q_: quit
 ;;;; Global Bindings
 (bind-key "M-k" 'kill-this-buffer)
 (bind-key "M-r" 'git-grep-symbol-at-point)
+(bind-key "C-c C-o" 'xdg-open-at-point)
 ;; (bind-key "M-]" 'bs-cycle-next)
 ;; (bind-key "M-[" 'bs-cycle-previous)
 
