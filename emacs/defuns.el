@@ -166,3 +166,101 @@
         (xdg-open (executable-find "xdg-open")))
     (if (and filename xdg-open)
         (start-process "xdg-open-at-point" nil xdg-open filename))))
+
+(defun current-project-gemfile-lock-path ()
+  (let* ((curdir (file-name-directory (buffer-file-name)))
+         (gemfile-lock-dir (my/find-to-root curdir (list "Gemfile.lock"))))
+    (and gemfile-lock-dir
+         (concat (file-name-as-directory gemfile-lock-dir) "Gemfile.lock"))))
+
+(defun rubocop-in-gemfile-lock-p ()
+  (let* ((gemfile-lock-path (current-project-gemfile-lock-path)))
+    (and gemfile-lock-path
+         (with-temp-buffer
+           (insert-file-contents gemfile-lock-path)
+           (goto-char (point-min))
+           (search-forward "rubocop" nil t)))))
+
+(defun my/wrap-ruby-rubocop (command)
+  (if (rubocop-in-gemfile-lock-p)
+      (append '("bundle" "exec") command)
+    command))
+
+(defun my/flycheck-command-wrapper-function (command)
+  (cond ((eq flycheck-checker 'ruby-rubocop)
+         (my/wrap-ruby-rubocop command))
+        ((eq major-mode 'web-mode)
+         (if (eslint-enable-current-buffer-p) command '("true")))
+        (t
+         command)))
+
+(defun eslint-enable-p (file-name)
+  (member (file-name-extension file-name) '("js" "ts" "jsx" "tsx")))
+
+(defun eslint-enable-current-buffer-p ()
+  (and (buffer-file-name) (eslint-enable-p (buffer-file-name))))
+
+(defun eslint-fix-web-mode ()
+  (when (eslint-enable-current-buffer-p)
+    (eslint-fix-on-save-mode)))
+
+(defun set-enh-ruby-mode-face ()
+  (set-face-attribute 'enh-ruby-op-face nil :foreground nil :inherit 'default))
+
+(defun enable-ruby-flycheck-if-rubocop-yml-exists ()
+  (enable-flycheck-if-parent-file-exists ".rubocop.yml" 'ruby-rubocop))
+
+(defun rspec-last-compilation-failed-p ()
+  (save-excursion
+    (goto-char (point-min))
+    (if (re-search-forward "^Failed examples:$" nil t) t nil)))
+
+(defun notify-rspec-finish ()
+  (let* ((failed (rspec-last-compilation-failed-p))
+         (urgency (if failed "critical" "normal"))
+         (message (if failed "Failed" "Succeeded")))
+    (shell-command (format "notify-send --urgency %s 'RSpec completed' '%s'" urgency message))))
+
+(defun rspec-runner--lang-ja-jp (orig-fn &rest args)
+  (concat "LANG=ja_JP.utf8 " (apply orig-fn args)))
+
+(defun my-highlight-indentation-guess-offset (orig-fn &rest args)
+  (cond ((and (eq major-mode 'enh-ruby-mode) (boundp 'enh-ruby-indent-level))
+         (setq ad-return-value enh-ruby-indent-level))
+        ((and (eq major-mode 'haml-mode) (boundp 'haml-indent-offset))
+         (setq ad-return-value haml-indent-offset))
+        ((and (eq major-mode 'sass-mode) (boundp 'sass-indent-offset))
+         (setq ad-return-value sass-indent-offset))
+        ((and (eq major-mode 'ssass-mode) (boundp 'ssass-tab-width))
+         (setq ad-return-value ssass-tab-width))
+        (t
+         (apply orig-fn args))))
+
+(defun my/ssass-indent ()
+  (indent-line-to
+   (cond
+    ((and (not ssass-indent-blanks) (ssass--whitespace-p 0)) 0)
+    ((ssass--whitespace-p -1) 0)
+    ((ssass--no-anchor-line-p) 0)
+    ((ssass--comma-before-p) (ssass--last-anchor-line-indent-level))
+    ;; ここが増えた。セレクタ行は自動インデントしない
+    ((ssass--selector-p (buffer-substring (point-at-bol) (point-at-eol)))
+     (current-indentation))
+    (t
+     (+ ssass-tab-width (ssass--last-anchor-line-indent-level))))))
+
+(defun my/ssass-dedent (n)
+  (interactive "p")
+  (if (= (point) (+ (point-at-bol) (current-indentation)))
+      (ssass-dedent)
+    (delete-backward-char n)))
+
+(defun my/ssass-indent-cyclic ()
+  (interactive)
+  (let* ((curr (current-indentation))
+         (curr (- curr (mod curr ssass-tab-width)))
+         (next (+ curr ssass-tab-width))
+         (max-indent (+ ssass-tab-width (ssass--last-anchor-line-indent-level))))
+    (indent-line-to (if (< max-indent next)
+                        0
+                      next))))
