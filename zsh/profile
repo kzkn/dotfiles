@@ -12,6 +12,7 @@ export ANDROID_HOME
 
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
 PATH=/usr/lib/lightdm/lightdm:$PATH
+PATH=/usr/bin/site_perl:$PATH
 PATH=$HOME/.cask/bin:$PATH
 PATH=$HOME/.rbenv/bin:$PATH
 PATH=$HOME/bin:$PATH
@@ -24,8 +25,11 @@ PATH=$ANDROID_HOME/emulator:$PATH
 PATH=$ANDROID_HOME/tools:$PATH
 PATH=$ANDROID_HOME/tools/bin:$PATH
 PATH=$ANDROID_HOME/platform-tools:$PATH
+PATH=$HOME/opt/flutter/bin:$PATH
 
 export PATH
+
+export BUNDLER_EDITOR='emacsclient -nw'
 
 eval "$(rbenv init -)"
 eval "$(nodenv init -)"

@@ -6,6 +6,7 @@
 [core]
 	excludesfile = /home/kazuki/.gitignore
 	autocrlf = false
+	hooksPath = /home/kazuki/git-hooks/hooks
 [alias]
 	co = checkout
 	br = branch
@@ -15,13 +16,5 @@
 	ls = log --oneline --stat
 	l1 = log --oneline
 	pick = cherry-pick
-[secrets]
-	providers = git secrets --aws-provider
-	patterns = [A-Z0-9]{20}
-	patterns = (\"|')?(AWS|aws|Aws)?_?(SECRET|secret|Secret)?_?(ACCESS|access|Access)?_?(KEY|key|Key)(\"|')?\\s*(:|=>|=)\\s*(\"|')?[A-Za-z0-9/\\+=]{40}(\"|')?
-	patterns = (\"|')?(AWS|aws|Aws)?_?(ACCOUNT|account|Account)_?(ID|id|Id)?(\"|')?\\s*(:|=>|=)\\s*(\"|')?[0-9]{4}\\-?[0-9]{4}\\-?[0-9]{4}(\"|')?
-	allowed = AKIAIOSFODNN7EXAMPLE
-	allowed = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-	patterns = (A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}
 [commit]
 	template = ~/.gitmessage

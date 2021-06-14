@@ -52,7 +52,7 @@
         (error (set-font (cdr fonts))))
     nil))
 
-(set-font '("Consolas 10" "Ricty 10"))
+(set-font '("Noto Sans Mono CJK JP 10" "Consolas 10" "Ricty 10"))
 
 ;; delete region
 (delete-selection-mode t)
@@ -79,6 +79,9 @@
 ;; ignore cases on find-file completion
 (setq completion-ignore-case t)
 (setq read-file-name-completion-ignore-case t)
+
+;; theme
+(load-theme 'tango-dark t)
 
 ;; current line
 (defvar hl-line-face) ;; Quiet the byte-compiler

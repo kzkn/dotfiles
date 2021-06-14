@@ -1,9 +1,10 @@
 (require 'package)
 
-(add-to-list 'package-archives
-             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+;; (add-to-list 'package-archives
+;;              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+;; (add-to-list 'package-archives
+;;              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives
              '("gnu" . "http://elpa.gnu.org/packages/") t)
 
@@ -48,7 +49,10 @@
 
 (use-package lsp-ui
   :ensure t
-  :after (lsp-mode))
+  :after (lsp-mode)
+  :config
+  (custom-set-variables
+   '(lsp-ui-sideline-actions-icon nil)))
 
 (use-package company-lsp
   :ensure t
@@ -62,26 +66,12 @@
   :ensure t
   :commands (company-mode)
   :config
-  (add-hook 'after-init-hook 'global-company-mode)
+  ;; (add-hook 'after-init-hook 'global-company-mode)
   (setq company-idle-delay 0.1))
 
 (use-package markdown-mode
   :ensure t
   :commands (markdown-mode)
-  :bind
-  (:map markdown-mode-map
-        ("M-n" . nil)
-        ("M-p" . nil)
-        ("C-c t 0" . markdown-remove-header)
-        ("C-c t 1" . markdown-insert-header-atx-1)
-        ("C-c t 2" . markdown-insert-header-atx-2)
-        ("C-c t 3" . markdown-insert-header-atx-3)
-        ("C-c t 4" . markdown-insert-header-atx-4)
-        ("C-c t 5" . markdown-insert-header-atx-5)
-        ("C-c t 6" . markdown-insert-header-atx-6)
-        ("C-c t h" . markdown-insert-header-dwim)
-        ("C-c t s" . markdown-insert-header-setext-2)
-        ("C-c t t" . markdown-insert-header-setext-1))
   :mode
   (("\\.markdown$" . markdown-mode)
    ("\\.md$" . markdown-mode)))
@@ -150,10 +140,10 @@
   :config
   (setq uniquify-buffer-name-style 'post-forward-angle-brackets))
 
-(use-package doom-themes
-  :ensure t
-  :config
-  (load-theme 'doom-vibrant t))
+;; (use-package doom-themes
+;;   :ensure t
+;;   :config
+;;   (load-theme 'doom-vibrant t))
 
 ;; (use-package esup)
 
@@ -171,12 +161,14 @@
   (add-hook 'web-mode-hook 'eslint-fix-web-mode)
   (add-hook 'web-mode-hook 'add-node-modules-path)
   (add-hook 'web-mode-hook 'flycheck-mode)
+  (add-hook 'web-mode-hook 'lsp-web-mode)
   :mode
   (("\\.html?$" . web-mode)
    ("\\.jsx?$" . web-mode)
+   ("\\.tsx$" . web-mode)
    ("\\.json$" . web-mode)
-   ("\\.erb$" . web-mode)
-   ("\\.tsx?$" . web-mode)))
+   ("\\.erb$" . web-mode)))
+   ;; ("\\.tsx?$" . web-mode)))
 
 (use-package ws-butler
   :ensure t
@@ -197,7 +189,10 @@
   (flycheck-add-mode 'javascript-eslint 'vue-html-mode)
   (flycheck-add-mode 'javascript-eslint 'ssass-mode)
   (flycheck-add-mode 'javascript-eslint 'web-mode)
-  (setq flycheck-command-wrapper-function 'my/flycheck-command-wrapper-function))
+  (setq flycheck-command-wrapper-function 'my/flycheck-command-wrapper-function)
+  ;; NOTE: プロジェクトローカルの eslint を使ってくれず devDependencies のパッケージを読めずにエラーとなるのでスキップしてる
+  ;; add-node-modules-path が効いて動きそうな気もするが
+  (advice-add 'flycheck-eslint-config-exists-p :around #'flycheck-skip-eslint-config-verification))
 
 (use-package yaml-mode
   :ensure t
@@ -327,16 +322,13 @@
     (interactive)
     (my/ssass-indent)))
 
-(use-package pug-mode
-  :ensure t
-  :commands (pug-mode)
-  :config
-  (setq pug-tab-width 2))
-
 (use-package typescript-mode
   :ensure t
   :commands (typescript-mode typescript-tsx-mode)
   :config
+  (add-hook 'typescript-mode-hook 'eslint-fix-web-mode)
+  (add-hook 'typescript-mode-hook 'add-node-modules-path)
+  (add-hook 'typescript-mode-hook 'lsp-deferred)
   (setq typescript-indent-level 2))
 
 (use-package css-mode
@@ -347,7 +339,9 @@
 (use-package sqlformat
   :ensure t
   :config
-  (add-hook 'sql-mode-hook 'sqlformat-on-save-mode))
+  (add-hook 'sql-mode-hook 'sqlformat-on-save-mode)
+  (custom-set-variables
+   '(sqlformat-command 'pgformatter)))
 
 (use-package reformatter
   :ensure t)
@@ -459,3 +453,14 @@ _q_: quit
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+
+
+
+;; TODO: later
+;; (add-hook 'kill-buffer-query-functions
+;;     ;; *scratch* バッファで kill-buffer したら内容を消去するだけにする
+;;           (function (lambda ()
+;;                       (if (string= "*scratch*" (buffer-name))
+;;                           (progn (my-make-scratch 0) nil)
+;;                         t))))

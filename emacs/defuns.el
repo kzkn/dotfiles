@@ -64,7 +64,7 @@
                                (format "PAGER='' git grep -I -n -i -e ")
                                'git-grep-history))))
   (setq git-grep-directory-history grep-dir)
-  (let ((command (format "cd %s && %s" grep-dir command-args)))
+  (let ((command (format "cd '%s' && %s" grep-dir command-args)))
     (grep command)))
 
 (defun git-grep-symbol-at-point ()
@@ -72,21 +72,20 @@
   (let ((sym (symbol-at-point)))
     (when sym
       (let* ((symbol-string (regexp-quote (symbol-name sym)))
-             (command (format "cd %s && PAGER='' git grep -I -n -i '%s'"
+             (command (format "cd '%s' && PAGER='' git grep -I -n -i '%s'"
                               (git-root-directory) symbol-string)))
         (grep command)))))
 
 (defun find-file-in-git-ls-files ()
   (interactive)
   (let* ((repo (git-root-directory))
-         (files (shell-command-to-string (format "cd %s && git ls-files" repo)))
-         (others (shell-command-to-string (format "cd %s && git ls-files --others --exclude-standard" repo))))
-    (find-file
-     (concat repo "/"
-             (ido-completing-read "Find file: "
-                                  (cl-remove-if (lambda (f) (string= f ""))
-                                                (append (split-string files "\n")
-                                                        (split-string others "\n"))))))))
+         (files (shell-command-to-string (format "cd '%s' && git ls-files -z" repo)))
+         (others (shell-command-to-string (format "cd '%s' && git ls-files -z --others --exclude-standard" repo)))
+         (candidates (cl-remove-if (lambda (f) (string= f ""))
+                                   (append (split-string files "\0")
+                                           (split-string others "\0")))))
+    (let ((selected-file (ido-completing-read "Find file: " candidates)))
+      (find-file (concat repo "/" selected-file)))))
 
 (defun sh (&optional arg)
   (interactive "P")
@@ -103,7 +102,7 @@
              if (file-exists-p target)
              return target)))
 
-(defun my/find-to-root (start targets)
+(defun my/find-to-root (start targets )
   (let ((prev "")
         (dir (file-name-as-directory start)))
     (while (and (not (string= dir prev))
@@ -117,6 +116,9 @@
          (exists (my/find-to-root curdir (list file))))
     (setq flycheck-checker checker)
     (flycheck-mode (if exists 1 0))))
+
+(defun flycheck-skip-eslint-config-verification (orig-fn &rest args)
+  t)
 
 (defun ghq-cd ()
   (interactive)
@@ -160,12 +162,15 @@
        (- (window-width) (/ (window-width) num-wins)))
       (split-window-horizontally-n (- num-wins 1)))))
 
+(defun xdg-open (filename)
+  (let ((xdg-open-command (executable-find "xdg-open")))
+    (if (and filename xdg-open-command)
+        (start-process "xdg-open-at-point" nil xdg-open-command filename))))
+
 (defun xdg-open-at-point ()
   (interactive)
-  (let ((filename (ffap-file-at-point))
-        (xdg-open (executable-find "xdg-open")))
-    (if (and filename xdg-open)
-        (start-process "xdg-open-at-point" nil xdg-open filename))))
+  (let ((filename (ffap-file-at-point)))
+    (xdg-open filename)))
 
 (defun current-project-gemfile-lock-path ()
   (let* ((curdir (file-name-directory (buffer-file-name)))
@@ -173,24 +178,34 @@
     (and gemfile-lock-dir
          (concat (file-name-as-directory gemfile-lock-dir) "Gemfile.lock"))))
 
-(defun rubocop-in-gemfile-lock-p ()
+(defun gem-in-gemfile-lock-p (gemname)
   (let* ((gemfile-lock-path (current-project-gemfile-lock-path)))
     (and gemfile-lock-path
          (with-temp-buffer
            (insert-file-contents gemfile-lock-path)
            (goto-char (point-min))
-           (search-forward "rubocop" nil t)))))
+           (search-forward gemname nil t)))))
 
 (defun my/wrap-ruby-rubocop (command)
-  (if (rubocop-in-gemfile-lock-p)
+  (if (gem-in-gemfile-lock-p "rubocop")
+      (append '("bundle" "exec") command)
+    command))
+
+(defun my/wrap-haml-lint (command)
+  (if (gem-in-gemfile-lock-p "haml_lint")
       (append '("bundle" "exec") command)
     command))
 
 (defun my/flycheck-command-wrapper-function (command)
   (cond ((eq flycheck-checker 'ruby-rubocop)
          (my/wrap-ruby-rubocop command))
+        ((eq flycheck-checker 'haml-lint)
+         (my/wrap-haml-lint command))
+        ;; TODO: まだ lsp になるでござる
         ((eq major-mode 'web-mode)
-         (if (eslint-enable-current-buffer-p) command '("true")))
+         (if (eslint-enable-current-buffer-p)
+             (append '("npx") command)
+           '("true")))
         (t
          command)))
 
@@ -203,6 +218,10 @@
 (defun eslint-fix-web-mode ()
   (when (eslint-enable-current-buffer-p)
     (eslint-fix-on-save-mode)))
+
+(defun lsp-web-mode ()
+  (when (eslint-enable-current-buffer-p)
+    (lsp-deferred)))
 
 (defun set-enh-ruby-mode-face ()
   (set-face-attribute 'enh-ruby-op-face nil :foreground nil :inherit 'default))
@@ -264,3 +283,24 @@
     (indent-line-to (if (< max-indent next)
                         0
                       next))))
+
+(defun bundle-open (gem-name)
+  (interactive
+   (let* ((gems (shell-command-to-string "bundle list --name-only"))
+          (candidates (split-string gems "\n" t)))
+     (list (ido-completing-read "Gem: " candidates))))
+  (find-file (s-chomp (shell-command-to-string (concat "bundle info " gem-name " --path")))))
+
+;; TODO: later
+;; (defun project-git-repository-p (directory)
+;;   (and (my/find-to-root directory (list ".git")) t))
+
+;; (defun project-rubygems-p ()
+;;   (and (my/find-to-root directory (list ".git")) t))
+
+;; (defun project-page-open ()
+;;   (interactive)
+;;   (let ((curdir (file-name-directory (buffer-file-name)))
+;;         (cond ((project-git-repository-p curdir)
+;;                )
+;;                (xdg-
