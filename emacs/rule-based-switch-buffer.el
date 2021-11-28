@@ -1,6 +1,16 @@
 (require 'cl-lib)
 
+(defgroup rule-based-switch-buffer nil
+  "Rule based switch buffer framework.")
+
+(defcustom rule-based-switch-buffer-completing-read-fn 'completing-read
+  "Function for completing read for choose a file name. "
+  :type 'function
+  :group 'rule-based-switch-buffer)
+
+;; ================================================
 ;; private
+
 (cl-defstruct rbsb-rule
   name
   matcher
@@ -45,10 +55,10 @@
 (defun rbsb-select-file-name (candidate-file-names)
   (if (<= (length candidate-file-names) 1)
       (car candidate-file-names)
-    ;; TODO: avoid to use ido directly
     (let ((choices (mapcar #'file-relative-name candidate-file-names)))
-      (ido-completing-read "Choose: " choices))))
+      (funcall rule-based-switch-buffer-completing-read-fn "Choose: " choices))))
 
+;; ================================================
 ;; public
 (cl-defmacro rule-based-switch-buffer-define (name &key matcher mappers)
   (declare (indent defun))
