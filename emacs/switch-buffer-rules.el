@@ -1,5 +1,7 @@
-;; (require 'rule-based-switch-buffer "./rule-based-switch-buffer.el")
 (require 'rule-based-switch-buffer)
+
+(custom-set-variables
+ '(rule-based-switch-buffer-completing-read-fn 'ido-completing-read))
 
 (rule-based-switch-buffer-define view-component-rb
   :matcher (lambda (fn) (string-match "_component.rb$" fn))
