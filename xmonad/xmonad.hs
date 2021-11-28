@@ -81,4 +81,6 @@ main = do
     , ("S-M-p" , spawn "rofi -show ssh")
     , ("S-M-f" , namedScratchpadAction myScratchpads "firefox")
     , ("S-M-g" , namedScratchpadAction myScratchpads "chrome")
+    , ("S-C-<Space>" , spawn "dunstctl close-all")
+    , ("C-`" , spawn "dunstctl history-pop")
     ]
