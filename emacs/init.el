@@ -435,7 +435,7 @@ _q_: quit
 ;; (bind-key "M-[" 'bs-cycle-previous)
 
 (bind-key "C-c g" 'revert-buffer)
-(bind-key "C-c s" 'rule-based-switch-buffer)
+(bind-key "C-c t" 'rule-based-switch-buffer)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
