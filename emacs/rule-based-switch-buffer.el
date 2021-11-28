@@ -60,12 +60,15 @@
 
 ;; ================================================
 ;; public
+
+;;;###autoload
 (cl-defmacro rule-based-switch-buffer-define (name &key matcher mappers)
   (declare (indent defun))
   `(progn
      (rbsb-push-rule ',name #',matcher ',mappers)
      t))
 
+;;;###autoload
 (defun rule-based-switch-buffer ()
   (interactive)
   (let* ((file-name (buffer-file-name))
