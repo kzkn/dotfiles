@@ -54,9 +54,9 @@
   (custom-set-variables
    '(lsp-ui-sideline-actions-icon nil)))
 
-(use-package company-lsp
-  :ensure t
-  :after (lsp-mode))
+;; (use-package company-lsp
+;;   :ensure t
+;;   :after (lsp-mode))
 
 (use-package dap-mode
   :ensure t
@@ -418,11 +418,14 @@ _q_: quit
          (f (expand-file-name file dir)))
     (apply 'load f args)))
 
+(add-to-list 'load-path (file-name-directory load-file-name))
+
 (load-x "misc")
 (load-x "defuns")
 (load-x "site" t)
 (load-x "flycheck-checker")
 (load-x "format")
+(load-x "switch-buffer-rules")
 
 ;;;; Global Bindings
 (bind-key "M-k" 'kill-this-buffer)
@@ -432,6 +435,7 @@ _q_: quit
 ;; (bind-key "M-[" 'bs-cycle-previous)
 
 (bind-key "C-c g" 'revert-buffer)
+(bind-key "C-c s" 'rule-based-switch-buffer)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
