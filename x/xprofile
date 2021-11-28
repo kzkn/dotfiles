@@ -14,7 +14,8 @@ xbindkeys -f ~/.xbindkeysrc
 $HOME/bin/wifi
 $HOME/bin/trackpoint-config
 $HOME/bin/disps
-fcitx-autostart
+fcitx5 &
+#fcitx-autostart
 # NOTE:不安定なので止めておく
 # picom --no-dock-shadow --no-dnd-shadow --daemon
 light-locker &
