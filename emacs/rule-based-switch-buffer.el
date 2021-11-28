@@ -46,7 +46,8 @@
   (if (<= (length candidate-file-names) 1)
       (car candidate-file-names)
     ;; TODO: avoid to use ido directly
-    (ido-completing-read "Choose: " candidate-file-names)))
+    (let ((choices (mapcar #'file-relative-name candidate-file-names)))
+      (ido-completing-read "Choose: " choices))))
 
 ;; public
 (cl-defmacro rule-based-switch-buffer-define (name &key matcher mappers)
