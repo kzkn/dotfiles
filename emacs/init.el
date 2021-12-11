@@ -410,6 +410,30 @@ _q_: quit
     ("f" find-file-in-git-ls-files)
     ("q" nil)))
 
+(use-package ruled-switch-buffer
+  :ensure t
+  :commands (ruled-switch-buffer)
+  :config
+  (ruled-switch-buffer-define view-component-rb
+    :matcher (lambda (fn) (string-match "_component.rb$" fn))
+    :mappers ((lambda (fn) (replace-regexp-in-string "\\.rb$" ".html.haml" fn))
+              (lambda (fn) (replace-regexp-in-string "\\.rb$" ".html.erb" fn))))
+
+  (ruled-switch-buffer-define view-component-haml
+    :matcher (lambda (fn) (string-match "_component.html.haml$" fn))
+    :mappers (lambda (fn) (replace-regexp-in-string "\\.html.haml$" ".rb" fn)))
+
+  (ruled-switch-buffer-define view-component-erb
+    :matcher (lambda (fn) (string-match "_component.html.erb$" fn))
+    :mappers (lambda (fn) (replace-regexp-in-string "\\.html.erb$" ".rb" fn)))
+
+  (ruled-switch-buffer-define app-rb-to-spec-rb
+    :matcher (lambda (fn) (string-match "/app/.*.rb$" fn))
+    :mappers (lambda (fn) (replace-regexp-in-string "\\(.*\\)/app/\\(.*\\).rb$" "\\1/spec/\\2_spec.rb" fn)))
+
+  (ruled-switch-buffer-define spec-rb-to-app-rb
+    :matcher (lambda (fn) (string-match "/spec/.*_spec.rb$" fn))
+    :mappers (lambda (fn) (replace-regexp-in-string "\\(.*\\)/spec/\\(.*\\)_spec.rb$" "\\1/app/\\2.rb" fn))))
 
 ;;;; Load local files
 
@@ -418,14 +442,11 @@ _q_: quit
          (f (expand-file-name file dir)))
     (apply 'load f args)))
 
-(add-to-list 'load-path (file-name-directory load-file-name))
-
 (load-x "misc")
 (load-x "defuns")
 (load-x "site" t)
 (load-x "flycheck-checker")
 (load-x "format")
-(load-x "switch-buffer-rules")
 
 ;;;; Global Bindings
 (bind-key "M-k" 'kill-this-buffer)
@@ -435,7 +456,7 @@ _q_: quit
 ;; (bind-key "M-[" 'bs-cycle-previous)
 
 (bind-key "C-c g" 'revert-buffer)
-(bind-key "C-c t" 'rule-based-switch-buffer)
+(bind-key "C-c t" 'ruled-switch-buffer)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -450,7 +471,8 @@ _q_: quit
  '(ediff-split-window-function (quote split-window-horizontally))
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
  '(inferior-lisp-program "sbcl" t)
- '(select-enable-clipboard t))
+ '(select-enable-clipboard t)
+ '(ruled-switch-buffer-completing-read-fn 'ido-completing-read))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
