@@ -45,7 +45,7 @@ myLayoutTile = spacing gapWidth $ gaps [gwU, gwD, gwL, gwR] $ tiled ||| Mirror t
     delta = 3/100
 
 
-myLogHook h = dynamicLogWithPP $ defaultPP
+myLogHook h = dynamicLogWithPP $ def
   { ppOutput = hPutStrLn h
   , ppOrder = \(ws:l:t:_) -> [ws, t]
   , ppCurrent = dzenColor myMagenta myBlack . (\ws -> "●")
@@ -63,9 +63,9 @@ myBaseConfig = (ewmh . docks) def
 myDzenStyle = "-bg '" ++ myBlack ++ "' -fn 'Noto Sans CJK JP:size=11'"
 
 main = do
-  leftDzen <- spawnPipe $ "dzen2 -dock -x 0 -w 600 -ta l " ++ myDzenStyle
-  spawn $ "conky -c ~/dotfiles/xmonad/dzen_conky.conf | dzen2 -dock -x 600 -ta r " ++ myDzenStyle
-  xmonad $ myBaseConfig
+  leftDzen <- spawnPipe $ "dzen2 -dock -x 0 -w 800 -ta l -xs 1 " ++ myDzenStyle
+  spawn $ "conky -c ~/dotfiles/xmonad/dzen_conky.conf | dzen2 -dock -x 800 -ta r -xs 1 " ++ myDzenStyle
+  xmonad . ewmhFullscreen . ewmh $ myBaseConfig
     { focusedBorderColor = myRed
     , terminal = myTerminal
     , modMask = mod4Mask
@@ -74,7 +74,7 @@ main = do
     , focusFollowsMouse = True
     , layoutHook = avoidStruts $ myLayout
     , logHook = myLogHook leftDzen
-    , handleEventHook = fullscreenEventHook <+> handleEventHook myBaseConfig
+    , handleEventHook = handleEventHook myBaseConfig
     }
     `additionalKeysP`
     [
