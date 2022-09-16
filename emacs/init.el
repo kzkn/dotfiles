@@ -207,7 +207,7 @@
   (add-hook 'enh-ruby-mode-hook 'set-enh-ruby-mode-face t)
   (add-hook 'enh-ruby-mode-hook 'enable-ruby-flycheck-if-rubocop-yml-exists)
   :mode
-  (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|jb\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
+  (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|jb\\|gemspec\\|podspec\\|csb\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
 
 (use-package ruby-electric
   :ensure t
@@ -222,7 +222,8 @@
   (add-hook 'dired-mode-hook 'rspec-dired-mode)
   :config
   (setq rspec-use-spring-when-possible nil
-        rspec-use-bundler-when-possible t)
+        rspec-use-bundler-when-possible t
+        rspec-factory-gem 'factory-bot)
   (add-hook 'rspec-after-verification-hook 'notify-rspec-finish)
   (advice-add 'rspec-runner :around #'rspec-runner--lang-ja-jp)
   (with-eval-after-load 'rspec-mode
@@ -427,6 +428,15 @@ _q_: quit
     :matcher (lambda (fn) (string-match "_component.html.erb$" fn))
     :mappers (lambda (fn) (replace-regexp-in-string "\\.html.erb$" ".rb" fn)))
 
+  (ruled-switch-buffer-define view-component-rb-no-ext
+    :matcher (lambda (fn) (string-match "app/components/.*\\.rb$" fn))
+    :mappers ((lambda (fn) (replace-regexp-in-string "\\.rb$" ".html.haml" fn))
+              (lambda (fn) (replace-regexp-in-string "\\.rb$" ".html.erb" fn))))
+
+  (ruled-switch-buffer-define view-component-haml-no-ext
+    :matcher (lambda (fn) (string-match "app/components/.*\\.html\\.haml$" fn))
+    :mappers (lambda (fn) (replace-regexp-in-string "\\.html.haml$" ".rb" fn)))
+
   (ruled-switch-buffer-define app-rb-to-spec-rb
     :matcher (lambda (fn) (string-match "/app/.*.rb$" fn))
     :mappers (lambda (fn) (replace-regexp-in-string "\\(.*\\)/app/\\(.*\\).rb$" "\\1/spec/\\2_spec.rb" fn)))
@@ -434,6 +444,14 @@ _q_: quit
   (ruled-switch-buffer-define spec-rb-to-app-rb
     :matcher (lambda (fn) (string-match "/spec/.*_spec.rb$" fn))
     :mappers (lambda (fn) (replace-regexp-in-string "\\(.*\\)/spec/\\(.*\\)_spec.rb$" "\\1/app/\\2.rb" fn))))
+
+(use-package dockerfile-mode
+  :ensure t
+  :commands (dockerfile-mode))
+
+(use-package go-mode
+  :ensure t
+  :commands (go-mode))
 
 ;;;; Load local files
 

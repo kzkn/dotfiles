@@ -5,8 +5,11 @@ URxvt.iso14755_52: false
 URxvt.scrollBar: false
 URxvt.cursorBlink: true
 
-URxvt.font: xft:Dejavu Sans Mono-11, \
-            xft:IPAGothic
+! URxvt.font: xft:DejaVu Sans Mono-11, \
+!             xft:IPAGothic
+URxvt.font: xft:JetBrains Mono-11, \
+            xft:IPAGothic-11, \
+            xft:Noto Color Emoji
 URxvt.letterSpace: -1
 URxvt.lineSpace: 0
 

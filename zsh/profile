@@ -4,7 +4,8 @@
 export EDITOR=vi
 export ANSIBLE_NOCOWS=1
 
-JAVA_HOME=$HOME/opt/android-studio/jre
+ANDROID_STUDIO_HOME=$HOME/opt/android-studio-2021.1.1.22
+JAVA_HOME=$ANDROID_STUDIO_HOME/jre
 export JAVA_HOME
 
 ANDROID_HOME=$HOME/Android/Sdk
@@ -20,7 +21,7 @@ PATH=$HOME/go/bin:$PATH
 PATH=$HOME/npm/bin:$PATH
 PATH=$HOME/.yarn/bin:$PATH
 PATH=$HOME/.nodenv/bin:$PATH
-PATH=$HOME/opt/android-studio/bin:$PATH
+PATH=$ANDROID_STUDIO_HOME/bin:$PATH
 PATH=$ANDROID_HOME/emulator:$PATH
 PATH=$ANDROID_HOME/tools:$PATH
 PATH=$ANDROID_HOME/tools/bin:$PATH
