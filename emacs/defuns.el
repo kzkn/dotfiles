@@ -223,9 +223,6 @@
   (when (eslint-enable-current-buffer-p)
     (lsp-deferred)))
 
-(defun set-enh-ruby-mode-face ()
-  (set-face-attribute 'enh-ruby-op-face nil :foreground nil :inherit 'default))
-
 (defun enable-ruby-flycheck-if-rubocop-yml-exists ()
   (enable-flycheck-if-parent-file-exists ".rubocop.yml" 'ruby-rubocop))
 

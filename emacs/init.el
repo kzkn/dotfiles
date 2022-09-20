@@ -176,7 +176,7 @@
   (mapc (lambda (hook)
           (add-hook hook 'ws-butler-mode))
         '(c-mode-common-hook
-          enh-ruby-mode-hook
+          ruby-mode-hook
           python-mode-hook
           haml-mode-hook
           yaml-mode-hook
@@ -198,27 +198,20 @@
   :ensure t
   :commands (yaml-mode))
 
-(use-package enh-ruby-mode
+(use-package ruby-mode
   :ensure t
-  :commands (enh-ruby-mode)
+  :commands (ruby-mode)
   :config
-  (setq enh-ruby-deep-indent-paren nil
-        enh-ruby-add-encoding-comment-on-save nil)
-  (add-hook 'enh-ruby-mode-hook 'set-enh-ruby-mode-face t)
-  (add-hook 'enh-ruby-mode-hook 'enable-ruby-flycheck-if-rubocop-yml-exists)
+  (setq ruby-insert-encoding-magic-comment nil)
+  (add-hook 'ruby-mode-hook 'enable-ruby-flycheck-if-rubocop-yml-exists)
   :mode
-  (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|jb\\|gemspec\\|podspec\\|csb\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
-
-(use-package ruby-electric
-  :ensure t
-  :commands (ruby-electric-mode)
-  :init (add-hook 'enh-ruby-mode-hook 'ruby-electric-mode))
+  (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|jb\\|gemspec\\|podspec\\|csb\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . ruby-mode)))
 
 (use-package rspec-mode
   :ensure t
   :commands (rspec-mode)
   :init
-  (add-hook 'enh-ruby-mode-hook 'rspec-mode)
+  (add-hook 'ruby-mode-hook 'rspec-mode)
   (add-hook 'dired-mode-hook 'rspec-dired-mode)
   :config
   (setq rspec-use-spring-when-possible nil
@@ -228,13 +221,6 @@
   (advice-add 'rspec-runner :around #'rspec-runner--lang-ja-jp)
   (with-eval-after-load 'rspec-mode
     (rspec-install-snippets)))
-
-(use-package inf-ruby
-  :ensure t
-  :commands (inf-ruby-minor-mode)
-  :init
-  (add-hook 'enh-ruby-mode-hook 'inf-ruby-minor-mode)
-  (add-hook 'compilation-filter-hook 'inf-ruby-auto-enter))
 
 (defun enable-haml-flycheck-if-haml-lint-yml-exists ()
   (enable-flycheck-if-parent-file-exists ".haml-lint.yml" 'haml-lint))
@@ -255,7 +241,7 @@
   (set-face-background 'highlight-indentation-face "gray20")
   (set-face-background 'highlight-indentation-current-column-face "gray35")
   (advice-add 'highlight-indentation-guess-offset :around 'my-highlight-indentation-guess-offset)
-  (let ((hooks '(enh-ruby-mode-hook
+  (let ((hooks '(ruby-mode-hook
                  python-mode-hook haml-mode-hook
                  coffee-mode-hook sass-mode-hook
                  yaml-mode-hook org-mode-hook
