@@ -76,6 +76,14 @@
                               (git-root-directory) symbol-string)))
         (grep command)))))
 
+(defun rg (grep-dir command-args)
+  (interactive
+   (let ((root (concat (git-root-directory) "/")))
+     (list (ido-read-directory-name "Directory for rg: " nil nil t)
+           (read-shell-command "Run rg (like this): " "rg -n -i " 'rg-history))))
+  (let ((command (format "cd '%s' && (%s | cat)" grep-dir command-args)))
+    (grep command)))
+
 (defun find-file-in-git-ls-files ()
   (interactive)
   (let* ((repo (git-root-directory))

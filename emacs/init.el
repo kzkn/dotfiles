@@ -378,18 +378,16 @@
     "
 ^Main^                      ^Git^
 ^^^^^^^^-------------------------------------------------------
-_r_: replace-string         _g_: magit-status
-_R_: replace-regexp         _b_: magit-blame
-_X_: query-replace-regexp   _d_: git-grep
-_c_: grep                   _p_: ghq-cd
+_e_: replace-regexp         _g_: magit-status
+_r_: rg                     _b_: magit-blame
+^  ^                        _d_: git-grep
+^  ^                        _p_: ghq-cd
 ^  ^                        _f_: find-file-in-git-ls-files
 
 _q_: quit
 "
-    ("r" replace-string)
-    ("R" replace-regexp)
-    ("X" query-replace-regexp)
-    ("c" grep)
+    ("e" replace-regexp)
+    ("r" rg)
     ("g" magit-status)
     ("b" magit-blame)
     ("d" git-grep)
