@@ -333,6 +333,16 @@
 (use-package reformatter
   :ensure t)
 
+(use-package smartparens
+  :ensure t
+  :config
+  (require 'smartparens-config)
+  (setq sp-highlight-pair-overlay nil)
+  (mapc (lambda (hook)
+          (add-hook hook 'smartparens-mode))
+        '(ruby-mode-hook
+          web-mode-hook)))
+
 (use-package hydra
   :ensure t
   :commands
