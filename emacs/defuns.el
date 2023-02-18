@@ -309,3 +309,18 @@
 ;;         (cond ((project-git-repository-p curdir)
 ;;                )
 ;;                (xdg-
+
+;; SEE: https://unix.stackexchange.com/a/154154
+(defun last-message ()
+  (save-excursion
+    (set-buffer "*Messages*")
+    (save-excursion
+      (forward-line -2)
+      (backward-char)
+      (let ((end (point)))
+        (forward-line 0)
+        (buffer-substring-no-properties (point) end)))))
+
+(defun insert-last-message ()
+  (interactive)
+  (insert (last-message)))

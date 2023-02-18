@@ -43,6 +43,13 @@
   :config
   (ido-grid-mode 1))
 
+(use-package eglot
+  :ensure t
+  :commands (eglot)
+  :config
+  (add-to-list 'eglot-server-programs
+               '(web-mode . ("typescript-language-server" "--stdio"))))
+
 (use-package lsp-mode
   :ensure t
   :commands (lsp))
@@ -469,6 +476,7 @@ _q_: quit
 
 (bind-key "C-c g" 'revert-buffer)
 (bind-key "C-c t" 'ruled-switch-buffer)
+(bind-key "C-c m" 'insert-last-message)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
