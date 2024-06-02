@@ -184,6 +184,7 @@
           (add-hook hook 'ws-butler-mode))
         '(c-mode-common-hook
           ruby-mode-hook
+          ruby-ts-mode-hook
           python-mode-hook
           haml-mode-hook
           yaml-mode-hook
@@ -205,20 +206,32 @@
   :ensure t
   :commands (yaml-mode))
 
-(use-package ruby-mode
+(defun my/ruby-beginning-of-block ()
+  (interactive)
+  (goto-char (sp-get (sp-get-thing t) :beg)))
+(defun my/ruby-end-of-block ()
+  (interactive)
+  (goto-char (sp-get (sp-get-thing) :end)))
+
+(use-package ruby-ts-mode
   :ensure t
-  :commands (ruby-mode)
+  :commands (ruby-ts-mode)
   :config
-  (setq ruby-insert-encoding-magic-comment nil)
-  (add-hook 'ruby-mode-hook 'enable-ruby-flycheck-if-rubocop-yml-exists)
+  (add-hook 'ruby-ts-mode-hook 'enable-ruby-flycheck-if-rubocop-yml-exists)
+  ;; (setq ruby-insert-encoding-magic-comment nil)
+  :bind
+  (:map ruby-ts-mode-map
+        ("M-C-p" . my/ruby-beginning-of-thing)
+        ("M-C-n" . my/ruby-end-of-thing))
   :mode
-  (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|jb\\|gemspec\\|podspec\\|csb\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . ruby-mode)))
+  (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|jb\\|gemspec\\|podspec\\|csb\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . ruby-ts-mode)))
 
 (use-package rspec-mode
   :ensure t
   :commands (rspec-mode)
   :init
   (add-hook 'ruby-mode-hook 'rspec-mode)
+  (add-hook 'ruby-ts-mode-hook 'rspec-mode)
   (add-hook 'dired-mode-hook 'rspec-dired-mode)
   :config
   (setq rspec-use-spring-when-possible nil
@@ -249,6 +262,7 @@
   (set-face-background 'highlight-indentation-current-column-face "gray35")
   (advice-add 'highlight-indentation-guess-offset :around 'my-highlight-indentation-guess-offset)
   (let ((hooks '(ruby-mode-hook
+                 ruby-ts-mode-hook
                  python-mode-hook haml-mode-hook
                  coffee-mode-hook sass-mode-hook
                  yaml-mode-hook org-mode-hook
@@ -344,11 +358,8 @@
   :ensure t
   :config
   (require 'smartparens-config)
-  (setq sp-highlight-pair-overlay nil)
-  (mapc (lambda (hook)
-          (add-hook hook 'smartparens-mode))
-        '(ruby-mode-hook
-          web-mode-hook)))
+  (show-smartparens-global-mode t)
+  (add-hook 'prog-mode-hook 'turn-on-smartparens-mode))
 
 (use-package hydra
   :ensure t
