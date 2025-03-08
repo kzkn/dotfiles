@@ -50,24 +50,24 @@
   (add-to-list 'eglot-server-programs
                '(web-mode . ("typescript-language-server" "--stdio"))))
 
-(use-package lsp-mode
-  :ensure t
-  :commands (lsp))
+;; (use-package lsp-mode
+;;   :ensure t
+;;   :commands (lsp))
 
-(use-package lsp-ui
-  :ensure t
-  :after (lsp-mode)
-  :config
-  (custom-set-variables
-   '(lsp-ui-sideline-actions-icon nil)))
+;; (use-package lsp-ui
+;;   :ensure t
+;;   :after (lsp-mode)
+;;   :config
+;;   (custom-set-variables
+;;    '(lsp-ui-sideline-actions-icon nil)))
 
 ;; (use-package company-lsp
 ;;   :ensure t
 ;;   :after (lsp-mode))
 
-(use-package dap-mode
-  :ensure t
-  :after (lsp-mode))
+;; (use-package dap-mode
+;;   :ensure t
+;;   :after (lsp-mode))
 
 (use-package company
   :ensure t
@@ -102,9 +102,9 @@
   (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
   (add-hook 'java-mode-hook 'my-java-mode-hook))
 
-(use-package highlight-parentheses
-  :config
-  (add-hook 'find-file-hook 'highlight-parentheses-mode))
+;; (use-package highlight-parentheses
+;;   :config
+;;   (add-hook 'find-file-hook 'highlight-parentheses-mode))
 
 (use-package emacs-lisp-mode
   :commands (emacs-lisp-mode)
@@ -115,20 +115,6 @@
 (use-package eldoc
   :config
   (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode))
-
-;; (use-package auto-async-byte-compile
-;;   :ensure t
-;;   :config
-;;   (add-hook 'emacs-lisp-mode-hook 'enable-auto-async-byte-compile-mode)
-;;   (setq auto-async-byte-compile-suppress-warnings t))
-
-(use-package slime
-  :ensure t
-  :config
-  (setq inferior-lisp-program "sbcl"
-        slime-contribs '(slime-fancy))
-  :mode
-  (("\\.asdf?$" . lisp-mode)))
 
 (use-package sh-script
   :config
@@ -146,13 +132,6 @@
 (use-package uniquify
   :config
   (setq uniquify-buffer-name-style 'post-forward-angle-brackets))
-
-;; (use-package doom-themes
-;;   :ensure t
-;;   :config
-;;   (load-theme 'doom-vibrant t))
-
-;; (use-package esup)
 
 (use-package web-mode
   :ensure t
@@ -183,7 +162,6 @@
   (mapc (lambda (hook)
           (add-hook hook 'ws-butler-mode))
         '(c-mode-common-hook
-          ruby-mode-hook
           ruby-ts-mode-hook
           python-mode-hook
           haml-mode-hook
@@ -230,7 +208,6 @@
   :ensure t
   :commands (rspec-mode)
   :init
-  (add-hook 'ruby-mode-hook 'rspec-mode)
   (add-hook 'ruby-ts-mode-hook 'rspec-mode)
   (add-hook 'dired-mode-hook 'rspec-dired-mode)
   :config
@@ -261,8 +238,7 @@
   (set-face-background 'highlight-indentation-face "gray20")
   (set-face-background 'highlight-indentation-current-column-face "gray35")
   (advice-add 'highlight-indentation-guess-offset :around 'my-highlight-indentation-guess-offset)
-  (let ((hooks '(ruby-mode-hook
-                 ruby-ts-mode-hook
+  (let ((hooks '(ruby-ts-mode-hook
                  python-mode-hook haml-mode-hook
                  coffee-mode-hook sass-mode-hook
                  yaml-mode-hook org-mode-hook
@@ -286,10 +262,6 @@
 (use-package sass-mode
   :ensure t
   :commands (sass-mode))
-
-(use-package haskell-mode
-  :ensure t
-  :commands (haskell-mode))
 
 (use-package yasnippet
   :ensure t
@@ -479,7 +451,7 @@ _q_: quit
 (load-x "format")
 
 ;;;; Global Bindings
-(bind-key "M-k" 'kill-this-buffer)
+(bind-key "M-k" 'kill-current-buffer)
 (bind-key "M-r" 'git-grep-symbol-at-point)
 (bind-key "C-c C-o" 'xdg-open-at-point)
 ;; (bind-key "M-]" 'bs-cycle-next)

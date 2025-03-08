@@ -130,8 +130,8 @@
 
 (defun ghq-cd ()
   (interactive)
-  (let* ((dirs (shell-command-to-string "/home/kazuki/go/bin/ghq list"))
-         (ghq-root (shell-command-to-string "/home/kazuki/go/bin/ghq root")))
+  (let* ((dirs (shell-command-to-string "/usr/sbin/ghq list"))
+         (ghq-root (shell-command-to-string "/usr/sbin/ghq root")))
     (find-file
      (concat (s-chomp ghq-root) "/"
              (ido-completing-read "Select directory: "
@@ -324,3 +324,16 @@
 (defun insert-last-message ()
   (interactive)
   (insert (last-message)))
+
+(defun my/ruby-beginning-of-thing ()
+  (interactive)
+  (goto-char (sp-get (sp-get-thing t) :beg)))
+
+(defun my/ruby-end-of-thing ()
+  (interactive)
+  (goto-char (sp-get (sp-get-thing) :end)))
+
+(defun create-scratch-buffer ()
+   (interactive)
+   (switch-to-buffer (get-buffer-create "*scratch*"))
+   (lisp-interaction-mode))

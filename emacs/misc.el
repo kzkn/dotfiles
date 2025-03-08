@@ -9,9 +9,16 @@
 (display-time-mode t)
 
 ;; mojibake
-(set-language-environment "Japanese")
+;; (set-language-environment "Japanese")
+(set-language-environment "English")
 (prefer-coding-system 'utf-8-unix)
 (set-default-coding-systems 'utf-8-unix)
+;; (set-terminal-coding-system 'utf-8)
+;; (set-keyboard-coding-system 'utf-8)
+;; (set-buffer-file-coding-system 'utf-8-unix)
+;; (setq locale-coding-system 'utf-8)
+;; (setq file-name-coding-system 'utf-8)
+;; (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 
 ;; urusai
 (setq inhibit-startup-message t)
@@ -130,7 +137,7 @@
 (setq org-log-done 'time)
 (setq org-startup-truncated nil)
 (setq org-todo-keywords '((sequence "TODO" "DOING" "|" "DONE" "SKIP")))
-(setq org-modules '(org-habits))
+;; (setq org-modules '(org-habits))
 (setq org-capture-templates
       '(("t" "TODO" entry
          (file "~/notes/todo.org")
@@ -138,3 +145,6 @@
         ("r" "Remember" entry
          (file+headline "~/notes/remember.org" "Remember")
          "** %?\n  %i\n  %a\n  %T")))
+
+;; gpg
+(setq epa-pinentry-mode 'loopback)
