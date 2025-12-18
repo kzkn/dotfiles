@@ -223,9 +223,11 @@
         rspec-use-bundler-when-possible t
         rspec-factory-gem 'factory-bot)
   (add-hook 'rspec-after-verification-hook 'notify-rspec-finish)
+  (add-hook 'rspec-mode-hook 'yas-minor-mode)
   (advice-add 'rspec-runner :around #'rspec-runner--lang-ja-jp)
   (with-eval-after-load 'rspec-mode
-    (rspec-install-snippets)))
+    (rspec-install-snippets)
+    (yas-reload-all))) ; load the personal defined snippets
 
 (defun enable-haml-flycheck-if-haml-lint-yml-exists ()
   (enable-flycheck-if-parent-file-exists ".haml-lint.yml" 'haml-lint))
@@ -275,8 +277,7 @@
   :ensure t
   :init
   (yas-reload-all)
-  (add-hook 'prog-mode-hook 'yas-minor-mode)
-  (add-hook 'rspec-mode-hook 'yas-minor-mode))
+  (add-hook 'prog-mode-hook 'yas-minor-mode))
 
 (use-package add-node-modules-path
   :ensure t)
