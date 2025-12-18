@@ -4,8 +4,8 @@
 export EDITOR=vi
 export ANSIBLE_NOCOWS=1
 
-ANDROID_STUDIO_HOME=$HOME/opt/android-studio-2021.1.1.22
-JAVA_HOME=$ANDROID_STUDIO_HOME/jre
+ANDROID_STUDIO_HOME=$HOME/opt/android-studio
+JAVA_HOME=$ANDROID_STUDIO_HOME/jbr
 export JAVA_HOME
 
 ANDROID_HOME=$HOME/Android/Sdk
@@ -27,6 +27,7 @@ PATH=$ANDROID_HOME/tools:$PATH
 PATH=$ANDROID_HOME/tools/bin:$PATH
 PATH=$ANDROID_HOME/platform-tools:$PATH
 PATH=$HOME/opt/flutter/bin:$PATH
+PATH=/opt/google-cloud-cli/bin:$PATH
 
 export PATH
 
