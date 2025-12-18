@@ -120,14 +120,22 @@
   :config
   (setq sh-basic-offset 2))
 
-(use-package popwin
-  :ensure t
-  :config
-  (popwin-mode 1)
-  (push '(rspec-compilation-mode :noselect t :stick t) popwin:special-display-config)
-  (push '(xref--xref-buffer-mode :noselect t) popwin:special-display-config)
-  (push '(grep-mode :noselect t :stick t) popwin:special-display-config)
-  (push '("*ruby*" :noselect t :stick t) popwin:special-display-config))
+(use-package popper
+  :ensure t ; or :straight t
+  :bind (("C-`"   . popper-toggle)
+         ("M-`"   . popper-cycle)
+         ("C-M-`" . popper-toggle-type))
+  :init
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          "Output\\*$"
+          "\\*Async Shell Command\\*"
+          help-mode
+          grep-mode
+          compilation-mode
+          rspec-compilation-mode))
+  (popper-mode +1)
+  (popper-echo-mode +1))                ; For echo area hints
 
 (use-package uniquify
   :config
@@ -266,7 +274,9 @@
 (use-package yasnippet
   :ensure t
   :init
-  (add-hook 'prog-mode-hook 'yas-minor-mode))
+  (yas-reload-all)
+  (add-hook 'prog-mode-hook 'yas-minor-mode)
+  (add-hook 'rspec-mode-hook 'yas-minor-mode))
 
 (use-package add-node-modules-path
   :ensure t)
