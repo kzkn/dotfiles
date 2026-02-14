@@ -137,7 +137,8 @@
           help-mode
           grep-mode
           compilation-mode
-          rspec-compilation-mode))
+          rspec-compilation-mode
+          yari-mode))
   (popper-mode +1)
   (popper-echo-mode +1))                ; For echo area hints
 
@@ -159,7 +160,7 @@
   (add-hook 'web-mode-hook 'eslint-fix-web-mode)
   (add-hook 'web-mode-hook 'add-node-modules-path)
   (add-hook 'web-mode-hook 'flycheck-mode)
-  (add-hook 'web-mode-hook 'lsp-web-mode)
+  ;; (add-hook 'web-mode-hook 'lsp-web-mode)
   :mode
   (("\\.html?$" . web-mode)
    ("\\.jsx?$" . web-mode)
@@ -232,6 +233,16 @@
   (with-eval-after-load 'rspec-mode
     (rspec-install-snippets)
     (yas-reload-all))) ; load the personal defined snippets
+
+(use-package inf-ruby
+  :ensure t
+  :commands (inf-ruby-minor-mode)
+  :config
+  (add-hook 'after-init-hook 'inf-ruby-switch-setup))
+
+(use-package yari
+  :ensure t
+  :commands (yari))
 
 (defun enable-haml-flycheck-if-haml-lint-yml-exists ()
   (enable-flycheck-if-parent-file-exists ".haml-lint.yml" 'haml-lint))
@@ -323,7 +334,7 @@
   :config
   (add-hook 'typescript-mode-hook 'eslint-fix-web-mode)
   (add-hook 'typescript-mode-hook 'add-node-modules-path)
-  (add-hook 'typescript-mode-hook 'lsp-deferred)
+  ;; (add-hook 'typescript-mode-hook 'lsp-deferred)
   (setq typescript-indent-level 2))
 
 (use-package css-mode
