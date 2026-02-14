@@ -148,3 +148,6 @@
 
 ;; gpg
 (setq epa-pinentry-mode 'loopback)
+
+;; setup frame
+(add-hook 'after-make-frame-functions 'on-frame-open)

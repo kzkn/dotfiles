@@ -7,6 +7,7 @@
 ;;              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives
              '("gnu" . "http://elpa.gnu.org/packages/") t)
+(add-to-list 'package-archives '("gnu-devel" . "https://elpa.gnu.org/devel/"))
 
 (package-initialize)
 
@@ -48,7 +49,10 @@
   :commands (eglot)
   :config
   (add-to-list 'eglot-server-programs
-               '(web-mode . ("typescript-language-server" "--stdio"))))
+               '(web-mode . ("typescript-language-server" "--stdio")))
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '(ruby-mode . ("ruby-lsp")))
+  )
 
 ;; (use-package lsp-mode
 ;;   :ensure t
