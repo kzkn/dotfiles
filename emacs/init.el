@@ -7,6 +7,7 @@
 ;;              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives
              '("gnu" . "http://elpa.gnu.org/packages/") t)
+(add-to-list 'package-archives '("gnu-devel" . "https://elpa.gnu.org/devel/"))
 
 (package-initialize)
 
@@ -48,7 +49,10 @@
   :commands (eglot)
   :config
   (add-to-list 'eglot-server-programs
-               '(web-mode . ("typescript-language-server" "--stdio"))))
+               '(web-mode . ("typescript-language-server" "--stdio")))
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '(ruby-mode . ("ruby-lsp")))
+  )
 
 (use-package lsp-mode
   :ensure t
@@ -134,14 +138,30 @@
   :config
   (setq sh-basic-offset 2))
 
-(use-package popwin
-  :ensure t
-  :config
-  (popwin-mode 1)
-  (push '(rspec-compilation-mode :noselect t :stick t) popwin:special-display-config)
-  (push '(xref--xref-buffer-mode :noselect t) popwin:special-display-config)
-  (push '(grep-mode :noselect t :stick t) popwin:special-display-config)
-  (push '("*ruby*" :noselect t :stick t) popwin:special-display-config))
+(use-package popper
+  :ensure t ; or :straight t
+  :bind (("C-`"   . popper-toggle)
+         ("M-`"   . popper-cycle)
+         ("C-M-`" . popper-toggle-type))
+  :init
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          "Output\\*$"
+          "\\*Async Shell Command\\*"
+          help-mode
+          compilation-mode
+          rspec-compilation-mode))
+  (popper-mode +1)
+  (popper-echo-mode +1))                ; For echo area hints
+
+;; (use-package popwin
+;;   :ensure t
+;;   :config
+;;   (popwin-mode 1)
+;;   (push '(rspec-compilation-mode :noselect t :stick t) popwin:special-display-config)
+;;   (push '(xref--xref-buffer-mode :noselect t) popwin:special-display-config)
+;;   (push '(grep-mode :noselect t :stick t) popwin:special-display-config)
+;;   (push '("*ruby*" :noselect t :stick t) popwin:special-display-config))
 
 (use-package uniquify
   :config
@@ -479,7 +499,7 @@ _q_: quit
 (load-x "format")
 
 ;;;; Global Bindings
-(bind-key "M-k" 'kill-this-buffer)
+(bind-key "M-k" 'kill-current-buffer)
 (bind-key "M-r" 'git-grep-symbol-at-point)
 (bind-key "C-c C-o" 'xdg-open-at-point)
 ;; (bind-key "M-]" 'bs-cycle-next)

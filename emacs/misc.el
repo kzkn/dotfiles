@@ -138,3 +138,6 @@
         ("r" "Remember" entry
          (file+headline "~/notes/remember.org" "Remember")
          "** %?\n  %i\n  %a\n  %T")))
+
+;; setup frame
+(add-hook 'after-make-frame-functions 'on-frame-open)

@@ -8,9 +8,10 @@ export GDK_DPI_SCALE=1
 export QT_SCALE_FACTOR=0.5 # for zoom
 export XDG_CONFIG_HOME="$HOME/.config"
 # for rofi
-export TERMINAL=alacritty
+#export TERMINAL=alacritty
+export TERMINAL=ghostty
 
-xrdb -merge ~/.Xresources
+#xrdb -merge ~/.Xresources
 xrandr --dpi 144
 xbindkeys -f ~/.xbindkeysrc
 
@@ -21,12 +22,13 @@ fcitx5 &
 #fcitx-autostart
 # NOTE:不安定なので止めておく
 # picom --no-dock-shadow --no-dnd-shadow --daemon
+picom --daemon
 light-locker &
 #urxvtd -q -o -f # FIXME: load .zshrc
-firefox &
+#firefox &
 synclient TouchpadOff=1
-feh --bg-scale ~/Images/wallpaper01.jpg
+feh --bg-scale ~/Images/wallpaper04.jpg
 
-exec xmonad
-#exec bspwm
+#exec xmonad
+exec bspwm
 #exec startxfce4

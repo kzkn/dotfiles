@@ -324,3 +324,9 @@
 (defun insert-last-message ()
   (interactive)
   (insert (last-message)))
+
+;; SEE: https://www.reddit.com/r/emacs/comments/1d9d1ob/getting_emacs_terminal_transparent/
+(defun on-frame-open (&optional frame)
+  "If the FRAME created in terminal don't load background color."
+  (unless (display-graphic-p frame)
+    (set-face-background 'default "unspecified-bg" frame)))
