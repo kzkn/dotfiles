@@ -4,8 +4,6 @@ export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
 export GDK_DPI_SCALE=1.5
-#export GDK_DPI_SCALE=1
-#export QT_SCALE_FACTOR=0.5 # for zoom
 export QT_SCALE_FACTOR=1.5
 #export QT_AUTO_SCREEN_SCALE_FACTOR=1
 #export XDG_CONFIG_HOME="$HOME/.config"
@@ -14,8 +12,8 @@ export QT_SCALE_FACTOR=1.5
 export TERMINAL=ghostty
 
 #xrdb -merge ~/.Xresources
-xrandr --dpi 144
-xbindkeys -f ~/.xbindkeysrc
+# xrandr --dpi 144
+# xbindkeys -f ~/.xbindkeysrc
 
 #$HOME/bin/wifi
 #$HOME/bin/trackpoint-config
@@ -28,9 +26,14 @@ picom --daemon
 light-locker &
 #urxvtd -q -o -f # FIXME: load .zshrc
 #firefox &
-synclient TouchpadOff=1
+# synclient TouchpadOff=1
 feh --bg-scale ~/Images/wallpaper04.jpg
+dunst &
+$HOME/bin/devtools &
+pulseaudio --start
+wmname LG3D
 
+# launch wm from .xinitrc
 #exec xmonad
-exec bspwm
+#exec bspwm
 #exec startxfce4
