@@ -44,15 +44,15 @@
   :config
   (ido-grid-mode 1))
 
-(use-package eglot
-  :ensure t
-  :commands (eglot)
-  :config
-  (add-to-list 'eglot-server-programs
-               '(web-mode . ("typescript-language-server" "--stdio")))
-  ;; (add-to-list 'eglot-server-programs
-  ;;              '(ruby-mode . ("ruby-lsp")))
-  )
+;; (use-package eglot
+;;   :ensure t
+;;   :commands (eglot)
+;;   :config
+;;   (add-to-list 'eglot-server-programs
+;;                '(web-mode . ("typescript-language-server" "--stdio")))
+;;   ;; (add-to-list 'eglot-server-programs
+;;   ;;              '(ruby-mode . ("ruby-lsp")))
+;;   )
 
 ;; (use-package lsp-mode
 ;;   :ensure t
@@ -73,12 +73,12 @@
 ;;   :ensure t
 ;;   :after (lsp-mode))
 
-(use-package company
-  :ensure t
-  :commands (company-mode)
-  :config
-  ;; (add-hook 'after-init-hook 'global-company-mode)
-  (setq company-idle-delay 0.1))
+;; (use-package company
+;;   :ensure t
+;;   :commands (company-mode)
+;;   :config
+;;   ;; (add-hook 'after-init-hook 'global-company-mode)
+;;   (setq company-idle-delay 0.1))
 
 (use-package markdown-mode
   :ensure t
@@ -176,6 +176,7 @@
           (add-hook hook 'ws-butler-mode))
         '(c-mode-common-hook
           ruby-ts-mode-hook
+          ruby-mode-hook
           python-mode-hook
           haml-mode-hook
           yaml-mode-hook
@@ -204,6 +205,7 @@
   (interactive)
   (goto-char (sp-get (sp-get-thing) :end)))
 
+;; ruby-ts-mode の調子が悪いので一時的に ruby-mode を使うようにしておく
 (use-package ruby-ts-mode
   :ensure t
   :commands (ruby-ts-mode)
@@ -217,11 +219,21 @@
   :mode
   (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|jb\\|gemspec\\|podspec\\|csb\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . ruby-ts-mode)))
 
+;; (use-package ruby-mode
+;;   :ensure t
+;;   :commands (ruby-mode)
+;;   :config
+;;   (add-hook 'ruby-mode-hook 'enable-ruby-flycheck-if-rubocop-yml-exists)
+;;   ;; (setq ruby-insert-encoding-magic-comment nil)
+;;   :mode
+;;   (("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|jb\\|gemspec\\|podspec\\|csb\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . ruby-mode)))
+
 (use-package rspec-mode
   :ensure t
   :commands (rspec-mode)
   :init
   (add-hook 'ruby-ts-mode-hook 'rspec-mode)
+  (add-hook 'ruby-mode-hook 'rspec-mode)
   (add-hook 'dired-mode-hook 'rspec-dired-mode)
   :config
   (setq rspec-use-spring-when-possible nil
@@ -264,6 +276,7 @@
   (set-face-background 'highlight-indentation-current-column-face "gray35")
   (advice-add 'highlight-indentation-guess-offset :around 'my-highlight-indentation-guess-offset)
   (let ((hooks '(ruby-ts-mode-hook
+                 ruby-mode-hook
                  python-mode-hook haml-mode-hook
                  coffee-mode-hook sass-mode-hook
                  yaml-mode-hook org-mode-hook
@@ -277,12 +290,12 @@
   :config
   (setq wgrep-auto-save-buffer t))
 
-(use-package coffee-mode
-  :ensure t
-  :commands (coffee-mode)
-  :config
-  (custom-set-variables
-   '(coffee-tab-width 2)))
+;; (use-package coffee-mode
+;;   :ensure t
+;;   :commands (coffee-mode)
+;;   :config
+;;   (custom-set-variables
+;;    '(coffee-tab-width 2)))
 
 (use-package sass-mode
   :ensure t
@@ -301,32 +314,32 @@
   :config
   (setq js-indent-level 2))
 
-(use-package vue-mode
-  :ensure t
-  :commands (vue-mode)
-  :config
-  (add-hook 'vue-mode-hook 'add-node-modules-path)
-  (add-hook 'vue-mode-hook 'flycheck-mode)
-  (add-hook 'vue-mode-hook 'eslint-fix-on-save-mode)
-  ;; https://github.com/AdamNiederer/vue-mode/issues/74#issuecomment-528560608
-  (setq mmm-js-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
-  (setq mmm-typescript-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
-  (custom-set-variables
-   '(vue-html-extra-indent 2)))
+;; (use-package vue-mode
+;;   :ensure t
+;;   :commands (vue-mode)
+;;   :config
+;;   (add-hook 'vue-mode-hook 'add-node-modules-path)
+;;   (add-hook 'vue-mode-hook 'flycheck-mode)
+;;   (add-hook 'vue-mode-hook 'eslint-fix-on-save-mode)
+;;   ;; https://github.com/AdamNiederer/vue-mode/issues/74#issuecomment-528560608
+;;   (setq mmm-js-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
+;;   (setq mmm-typescript-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
+;;   (custom-set-variables
+;;    '(vue-html-extra-indent 2)))
 
-(use-package ssass-mode
-  :ensure t
-  :commands (ssass-mode)
-  :bind
-  (:map ssass-mode-map
-        ("\177" . my/ssass-dedent)  ; [backspace]
-        ("C-i" . my/ssass-indent-cyclic))
-  :config
-  ;; 関数を上書き
-  (defun ssass-indent ()
-    "Indent the current line."
-    (interactive)
-    (my/ssass-indent)))
+;; (use-package ssass-mode
+;;   :ensure t
+;;   :commands (ssass-mode)
+;;   :bind
+;;   (:map ssass-mode-map
+;;         ("\177" . my/ssass-dedent)  ; [backspace]
+;;         ("C-i" . my/ssass-indent-cyclic))
+;;   :config
+;;   ;; 関数を上書き
+;;   (defun ssass-indent ()
+;;     "Indent the current line."
+;;     (interactive)
+;;     (my/ssass-indent)))
 
 (use-package typescript-mode
   :ensure t

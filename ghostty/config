@@ -99,6 +99,7 @@
 # configuration files or on the CLI if you want to clear values set on the
 # CLI.
 font-family = "JetBrains Mono"
+font-family = "Noto Sans Mono CJK JP"
 
 font-family-bold = "JetBrains Mono"
 font-family-italic = "JetBrains Mono"

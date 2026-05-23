@@ -8,7 +8,6 @@ alias l='git log --oneline'
 alias d='git diff'
 alias be='bundle exec'
 alias lock='light-locker-command -l'
-alias gcd='cd $(ghq root)/$(ghq list | peco)'
 alias xo='xdg-open'
 alias npx='echo "do not use npx"'
 
@@ -28,6 +27,26 @@ function _do_tmux_capture {
 
 function cap { _do_tmux_capture "$1" -p }
 function caph { _do_tmux_capture "$1" -pS -32768 }
+
+function gcd {
+  if [ x"$1" != x ]; then
+    cd $(ghq root)/$(ghq list | peco --query "$1" --select-1)
+  else
+    cd $(ghq root)/$(ghq list | peco)
+  fi
+}
+
+function ide {
+  gcd "$1" && split_panes.sh
+
+  tmux select-pane -t 0
+  tmux send-keys "e -nw ." Enter
+
+  tmux select-pane -t 1
+  tmux send-keys "claude" Enter
+
+  tmux select-pane -t 0
+}
 
 ## local, prompt
 function _load { [ -f "$1" ] && . "$1" }

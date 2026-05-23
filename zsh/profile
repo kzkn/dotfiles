@@ -28,6 +28,7 @@ PATH=$ANDROID_HOME/tools/bin:$PATH
 PATH=$ANDROID_HOME/platform-tools:$PATH
 PATH=$HOME/opt/flutter/bin:$PATH
 PATH=/opt/google-cloud-cli/bin:$PATH
+PATH=$HOME/.cargo/bin:$PATH
 
 export PATH
 
