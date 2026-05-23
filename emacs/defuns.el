@@ -128,10 +128,12 @@
 (defun flycheck-skip-eslint-config-verification (orig-fn &rest args)
   t)
 
+(defvar ghq-path "/usr/sbin/ghq")
+
 (defun ghq-cd ()
   (interactive)
-  (let* ((dirs (shell-command-to-string "/usr/sbin/ghq list"))
-         (ghq-root (shell-command-to-string "/usr/sbin/ghq root")))
+  (let* ((dirs (shell-command-to-string (concat ghq-path " list")))
+         (ghq-root (shell-command-to-string (concat ghq-path " root"))))
     (find-file
      (concat (s-chomp ghq-root) "/"
              (ido-completing-read "Select directory: "
